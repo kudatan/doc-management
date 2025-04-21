@@ -1,0 +1,29 @@
+@import "../../../styles/base/vars";
+@import "../../../styles/base/mixins";
+
+.login__wrapper {
+  @include flex-center;
+  .login {
+    font-family: $montserrat;
+
+    width: 100%;
+    max-width: 50rem;
+
+    &-header {
+      @include main-text;
+    }
+
+    &-form {
+      @include flex-center;
+      flex-direction: column;
+
+      &-btn {
+        font-size: 2rem;
+      }
+
+      &-input {
+        width: 100%;
+      }
+    }
+  }
+}

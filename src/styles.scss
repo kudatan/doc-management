@@ -1,1 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
+@import "styles/base/vars";
+
+html {
+  font-size: 62.5%;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+mat-label {
+  font-size: 2rem;
+}
+
+.mat-mdc-form-field {
+  input.mat-mdc-input-element {
+    font-size: 2rem;
+  }
+}
+
+.error-msg {
+  color: $error;
+  font-size: 1.7rem;
+}
