@@ -1,0 +1,47 @@
+@use "../../../styles/base/vars" as *;
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  font-family: $unbounded;
+
+  &-left {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+
+    font-size: 1.5rem;
+    font-weight: 800;
+
+    &-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+
+      &-description {
+        font-size: 1rem;
+        font-weight: 500;
+      }
+    }
+
+
+    &-logo {
+      width: 5rem;
+    }
+  }
+
+  &-right {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+
+    &-btn {
+      font-family: $montserrat;
+
+      font-size: 1rem;
+      font-weight: 500;
+    }
+  }
+}

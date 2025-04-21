@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { NgIf } from '@angular/common';
+import {ToastService} from '../../services/toast/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -16,13 +17,13 @@ import { NgIf } from '@angular/common';
 })
 export class LoginComponent implements OnInit {
   loading = signal(false);
-  errorMessage = signal('');
   form!: ReturnType<FormBuilder['group']>;
 
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private toast: ToastService
   ) {}
 
   ngOnInit() {
@@ -43,10 +44,11 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: res => {
           localStorage.setItem('token', res.token);
+          this.toast.show('Logged in!', 'success');
           this.router.navigate(['/dashboard']);
         },
         error: () => {
-          this.errorMessage.set('Login failed. Please check your credentials.');
+          this.toast.show('Login failed. Please check your credentials.', 'error');
           this.loading.set(false);
         },
       });
