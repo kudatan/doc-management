@@ -1,6 +1,6 @@
 <mat-toolbar color="primary" class="header">
   <div class="header-left">
-    <app-logo/>
+    <app-logo />
     <div class="header-left-text">
       <span>DoMan</span>
       <span class="header-left-text-description">Doc Manager</span>
@@ -8,7 +8,16 @@
   </div>
 
   <div class="header-right">
-    <a class="header-right-btn" mat-button routerLink="/login">Login</a>
-    <a class="header-right-btn" mat-button routerLink="/register">Register</a>
+    <ng-container *ngIf="user() as user; else guest">
+      <div class="header-right-user">
+        <span class="header-right-user-name">name : {{ user.fullName }}</span>
+        <span class="header-right-user-role"> role : {{ user.role }}</span>
+      </div>
+    </ng-container>
+
+    <ng-template #guest>
+      <a class="header-right-btn" mat-button routerLink="/login">Login</a>
+      <a class="header-right-btn" mat-button routerLink="/register">Register</a>
+    </ng-template>
   </div>
 </mat-toolbar>

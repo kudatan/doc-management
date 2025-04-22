@@ -1,0 +1,21 @@
+@use "../../../styles/base/vars" as *;
+
+.no-documents {
+  font-family: $montserrat;
+  font-size: 1.5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 2rem;
+}
+
+.dashboard {
+  &-paginator {
+    font-family: $montserrat;
+    font-size: 1rem;
+    font-weight: 500;
+
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+}

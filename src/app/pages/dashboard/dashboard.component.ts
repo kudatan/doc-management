@@ -6,6 +6,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import {DocumentDto, DocumentStatus} from '../../interfaces/dashboard.interface';
 import {DocumentService} from '../../services/dashboard/document.service';
+import {UserService} from '../../services/user/user.service';
 
 
 @Component({
@@ -40,7 +41,8 @@ export class DashboardComponent implements OnInit {
     'DECLINED',
   ];
 
-  constructor(private documentService: DocumentService) {}
+  constructor(private documentService: DocumentService,
+              private userService: UserService,) {}
 
   ngOnInit() {
     this.loadDocuments();
@@ -72,5 +74,9 @@ export class DashboardComponent implements OnInit {
     this.page.set(event.pageIndex + 1);
     this.size.set(event.pageSize);
     this.loadDocuments();
+  }
+
+  onAddDocument() {
+    // this.router.navigate(['/document/new']);
   }
 }

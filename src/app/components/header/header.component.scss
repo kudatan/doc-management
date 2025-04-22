@@ -43,5 +43,23 @@
       font-size: 1rem;
       font-weight: 500;
     }
+
+    &-user {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+
+      &-name, &-role {
+        font-family: $montserrat;
+      }
+
+      &-name {
+        font-weight: 700;
+      }
+
+      &-role {
+        font-size: 1rem;
+      }
+    }
   }
 }

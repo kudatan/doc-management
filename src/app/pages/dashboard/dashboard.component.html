@@ -1,4 +1,4 @@
-<div class="dashboard-container">
+<div class="dashboard">
   <mat-form-field appearance="fill">
     <mat-label>Status</mat-label>
     <mat-select
@@ -6,8 +6,8 @@
       (selectionChange)="onStatusChange($event.value)"
     >
       <mat-option value="">All</mat-option>
-      <mat-option *ngFor="let s of statuses" [value]="s">
-        {{ s }}
+      <mat-option *ngFor="let status of statuses" [value]="status">
+        {{ status }}
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -15,6 +15,10 @@
   <div *ngIf="loading()">Loading...</div>
 
   <div *ngIf="!loading()">
+    <div *ngIf="documents().length === 0" class="no-documents">
+      No documents :(
+    </div>
+
     <mat-card *ngFor="let doc of documents()">
       <mat-card-title>{{ doc.name }}</mat-card-title>
       <mat-card-content>
@@ -25,6 +29,7 @@
   </div>
 
   <mat-paginator
+    class="dashboard-paginator"
     [length]="total()"
     [pageIndex]="page() - 1"
     [pageSize]="size()"
