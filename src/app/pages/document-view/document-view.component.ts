@@ -1,29 +1,22 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormsModule } from '@angular/forms';
+import {FormBuilder, FormsModule} from '@angular/forms';
 import PSPDFKit from 'pspdfkit';
 import { DocumentService } from '../../services/dashboard/document.service';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { HttpClient } from '@angular/common/http';
-import { ToastService } from '../../services/toast/toast.service';
-import { AuthService } from '../../services/auth/auth.service';
-import { UserService } from '../../services/user/user.service';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatButtonModule} from '@angular/material/button';
+import {HttpClient} from '@angular/common/http';
+import {ToastService} from '../../services/toast/toast.service';
+import {AuthService} from '../../services/auth/auth.service';
+import {UserService} from '../../services/user/user.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-document-view',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatProgressSpinnerModule,
-  ],
+  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './document-view.component.html',
   styleUrls: ['./document-view.component.scss'],
 })
@@ -37,9 +30,11 @@ export class DocumentViewComponent implements OnInit {
   loading = signal(true);
 
   private userService = inject(UserService);
-  user = this.userService.user;
+  user = this.userService.user$;
 
-  constructor(private toast: ToastService) {}
+  constructor(
+    private toast: ToastService,
+  ) {}
 
   get isUser() {
     return this.userService.isUser();
@@ -69,7 +64,7 @@ export class DocumentViewComponent implements OnInit {
 
     this.documentService.updateName(id, { name: newName }).subscribe({
       next: () => {
-        this.document.update((doc) => ({ ...doc, name: newName }));
+        this.document.update(doc => ({ ...doc, name: newName }));
         this.initialName.set(newName);
         this.toast.show('Name updated successfully', 'success');
       },
@@ -89,12 +84,7 @@ export class DocumentViewComponent implements OnInit {
 
   deleteDocument(): void {
     const doc = this.document();
-    if (
-      !doc ||
-      !this.isUser ||
-      !(doc.status === 'DRAFT' || doc.status === 'REVOKE')
-    )
-      return;
+    if (!doc || !this.isUser || !(doc.status === 'DRAFT' || doc.status === 'REVOKE')) return;
 
     this.documentService.deleteDocument(doc.id).subscribe({
       next: () => {
@@ -118,7 +108,7 @@ export class DocumentViewComponent implements OnInit {
       },
       error: () => {
         this.toast.show('Failed to revoke document', 'error');
-      },
+      }
     });
   }
 
@@ -131,4 +121,6 @@ export class DocumentViewComponent implements OnInit {
       error: () => this.toast.show('Failed to refresh document', 'error'),
     });
   }
+
+
 }
