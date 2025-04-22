@@ -20,6 +20,22 @@
       </button>
     </div>
 
+    <div *ngIf="!isUser">
+      <mat-form-field appearance="fill" class="status-select">
+        <mat-label>Change Status</mat-label>
+        <mat-select
+          [value]="document()?.status"
+          (selectionChange)="selectedStatus.set($event.value); changeStatus()"
+          [disabled]="statusLoading()"
+        >
+          <mat-option value="UNDER_REVIEW">Under Review</mat-option>
+          <mat-option value="APPROVED">Approved</mat-option>
+          <mat-option value="DECLINED">Declined</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+
     <ng-template #onlyName>
       <h1>{{ document()?.name }}</h1>
     </ng-template>

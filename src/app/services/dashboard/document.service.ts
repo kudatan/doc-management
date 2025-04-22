@@ -56,5 +56,8 @@ export class DocumentService {
     return this.http.post<void>(`${this.baseUrl}/${id}/revoke-review`, {});
   }
 
+  changeStatus(id: string, status: 'UNDER_REVIEW' | 'APPROVED' | 'DECLINED'): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/${id}/change-status`, { status });
+  }
 
 }

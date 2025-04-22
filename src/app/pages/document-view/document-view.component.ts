@@ -12,11 +12,12 @@ import {ToastService} from '../../services/toast/toast.service';
 import {AuthService} from '../../services/auth/auth.service';
 import {UserService} from '../../services/user/user.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {MatSelectModule} from '@angular/material/select';
 
 @Component({
   selector: 'app-document-view',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule],
+  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule, MatSelectModule],
   templateUrl: './document-view.component.html',
   styleUrls: ['./document-view.component.scss'],
 })
@@ -28,6 +29,9 @@ export class DocumentViewComponent implements OnInit {
   name = signal('');
   initialName = signal('');
   loading = signal(true);
+  selectedStatus = signal<'UNDER_REVIEW' | 'APPROVED' | 'DECLINED' | null>(null);
+  statusLoading = signal(false);
+
 
   private userService = inject(UserService);
   user = this.userService.user$;
@@ -119,6 +123,25 @@ export class DocumentViewComponent implements OnInit {
     this.documentService.getById(id).subscribe({
       next: (doc) => this.document.set(doc),
       error: () => this.toast.show('Failed to refresh document', 'error'),
+    });
+  }
+
+  changeStatus(): void {
+    const doc = this.document();
+    const status = this.selectedStatus();
+    if (!doc || !this.userService.isReviewer() || !status) return;
+
+    this.statusLoading.set(true);
+    this.documentService.changeStatus(doc.id, status).subscribe({
+      next: () => {
+        this.toast.show(`Status changed to ${status}`, 'success');
+        this.refreshDocument();
+        this.statusLoading.set(false);
+      },
+      error: () => {
+        this.toast.show('Failed to change status', 'error');
+        this.statusLoading.set(false);
+      },
     });
   }
 

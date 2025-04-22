@@ -12,12 +12,13 @@ import {
   DocumentStatus,
 } from '../../interfaces/dashboard.interface';
 import { DocumentService } from '../../services/dashboard/document.service';
-import { UserService } from '../../services/user/user.service';
+import {User, UserService} from '../../services/user/user.service';
 import { FileUploadDialogComponent } from './file-upload-dialog/file-upload-dialog.component';
 import {MatTableModule} from '@angular/material/table';
 import {MatSortModule, Sort} from '@angular/material/sort';
 import { MatInputModule } from '@angular/material/input';
 import {RouterLink} from '@angular/router';
+import {MatDivider, MatDividerModule} from '@angular/material/divider';
 
 @Component({
   selector: 'app-dashboard',
@@ -35,7 +36,8 @@ import {RouterLink} from '@angular/router';
     MatSortModule,
     DatePipe,
     MatInputModule,
-    RouterLink
+    RouterLink,
+    MatDividerModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
@@ -48,6 +50,10 @@ export class DashboardComponent implements OnInit {
   page = signal(1);
   size = signal(5);
   statusFilter = signal<DocumentStatus | undefined>(undefined);
+  users = signal<User[]>([]);
+  creatorFilter = signal<string | undefined>(undefined);
+  userPage = signal(1);
+  userSize = signal(5);
   displayedColumns = ['name', 'status', 'createdAt', 'creator', 'updatedAt', 'action'];
 
 
@@ -68,6 +74,27 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.loadDocuments();
+
+    if (!this.isUser) {
+      this.loadUsers();
+    }
+  }
+
+  loadUsers() {
+    this.userService.getAllUsers(this.userPage(), this.userSize()).subscribe((users) => {
+      this.users.set(users);
+    });
+  }
+
+  nextUserPage() {
+    this.userPage.set(this.userPage() + 1);
+    this.loadUsers();
+  }
+
+  prevUserPage() {
+    const newPage = Math.max(1, this.userPage() - 1);
+    this.userPage.set(newPage);
+    this.loadUsers();
   }
 
   loadDocuments() {
@@ -77,6 +104,7 @@ export class DashboardComponent implements OnInit {
         page: this.page(),
         size: this.size(),
         status: this.statusFilter() || undefined,
+        creatorId: this.creatorFilter() || undefined,
         sort: 'updatedAt,desc',
       })
       .subscribe((res) => {
@@ -134,6 +162,12 @@ export class DashboardComponent implements OnInit {
         this.documents.set(res.results);
         this.total.set(res.count);
       });
+  }
+
+  onCreatorChange(creatorId: string | '') {
+    this.creatorFilter.set(creatorId || undefined);
+    this.page.set(1);
+    this.loadDocuments();
   }
 
 }
