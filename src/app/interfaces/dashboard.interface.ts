@@ -15,11 +15,6 @@ export interface DocumentDto {
   creator: Creator;
 }
 
-export interface DocumentListResponse {
-  results: DocumentDto[];
-  count: number;
-}
-
 export type DocumentStatus =
   | 'DRAFT'
   | 'REVOKE'

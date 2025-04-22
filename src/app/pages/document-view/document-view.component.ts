@@ -81,4 +81,46 @@ export class DocumentViewComponent implements OnInit {
       baseUrl: location.origin + '/',
     });
   }
+
+  deleteDocument(): void {
+    const doc = this.document();
+    if (!doc || !this.isUser || !(doc.status === 'DRAFT' || doc.status === 'REVOKE')) return;
+
+    this.documentService.deleteDocument(doc.id).subscribe({
+      next: () => {
+        this.toast.show('Document deleted', 'success');
+        history.back();
+      },
+      error: () => {
+        this.toast.show('Failed to delete document', 'error');
+      },
+    });
+  }
+
+  revokeDocument(): void {
+    const doc = this.document();
+    if (!doc || !this.isUser || doc.status !== 'READY_FOR_REVIEW') return;
+
+    this.documentService.revokeReview(doc.id).subscribe({
+      next: () => {
+        this.toast.show('Document revoked from review', 'success');
+        this.refreshDocument();
+      },
+      error: () => {
+        this.toast.show('Failed to revoke document', 'error');
+      }
+    });
+  }
+
+  refreshDocument(): void {
+    const id = this.document()?.id;
+    if (!id) return;
+
+    this.documentService.getById(id).subscribe({
+      next: (doc) => this.document.set(doc),
+      error: () => this.toast.show('Failed to refresh document', 'error'),
+    });
+  }
+
+
 }

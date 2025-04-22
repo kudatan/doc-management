@@ -26,6 +26,25 @@
 
     <p>Status: {{ document()?.status }}</p>
 
+    <button
+      *ngIf="isUser && (document()?.status === 'DRAFT' || document()?.status === 'REVOKE')"
+      mat-raised-button
+      color="warn"
+      (click)="deleteDocument()"
+    >
+      Delete
+    </button>
+
+    <button
+      *ngIf="isUser && document()?.status === 'READY_FOR_REVIEW'"
+      mat-raised-button
+      color="accent"
+      (click)="revokeDocument()"
+    >
+      Revoke from Review
+    </button>
+
+
   </div>
 </ng-container>
 

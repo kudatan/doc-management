@@ -48,5 +48,13 @@ export class DocumentService {
     return this.http.patch<void>(`${this.baseUrl}/${id}`, payload);
   }
 
+  deleteDocument(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  revokeReview(id: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/${id}/revoke-review`, {});
+  }
+
 
 }
