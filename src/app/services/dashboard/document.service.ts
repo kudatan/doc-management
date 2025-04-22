@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
+  DocumentDto,
   DocumentListResponse,
   DocumentStatus,
 } from '../../interfaces/dashboard.interface';
@@ -38,4 +39,9 @@ export class DocumentService {
   uploadDocument(formData: FormData): Observable<any> {
     return this.http.post(this.baseUrl, formData);
   }
+
+  getById(id: string): Observable<DocumentDto> {
+    return this.http.get<DocumentDto>(`${this.baseUrl}/${id}`);
+  }
+
 }

@@ -17,6 +17,7 @@ import { FileUploadDialogComponent } from './file-upload-dialog/file-upload-dial
 import {MatTableModule} from '@angular/material/table';
 import {MatSortModule, Sort} from '@angular/material/sort';
 import { MatInputModule } from '@angular/material/input';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -33,7 +34,8 @@ import { MatInputModule } from '@angular/material/input';
     MatTableModule,
     MatSortModule,
     DatePipe,
-    MatInputModule
+    MatInputModule,
+    RouterLink
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
@@ -46,7 +48,7 @@ export class DashboardComponent implements OnInit {
   page = signal(1);
   size = signal(5);
   statusFilter = signal<DocumentStatus | undefined>(undefined);
-  displayedColumns = ['name', 'status', 'createdAt', 'creator', 'updatedAt'];
+  displayedColumns = ['name', 'status', 'createdAt', 'creator', 'updatedAt', 'action'];
 
 
   statuses: DocumentStatus[] = [
