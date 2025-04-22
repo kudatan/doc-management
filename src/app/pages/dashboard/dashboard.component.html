@@ -25,6 +25,22 @@
       </mat-select>
     </mat-form-field>
 
+    <mat-form-field *ngIf="!isUser" appearance="fill">
+      <mat-label>Email</mat-label>
+      <mat-select [value]="creatorEmailFilter()" (selectionChange)="onCreatorEmailChange($event.value)">
+        <mat-option value="">All</mat-option>
+        <mat-option *ngFor="let user of users()" [value]="user.email">
+          {{ user.email }}
+        </mat-option>
+        <mat-divider></mat-divider>
+        <div class="pagination-controls">
+          <button mat-button (click)="prevUserPage()">← Prev</button>
+          <button mat-button (click)="nextUserPage()">Next →</button>
+        </div>
+      </mat-select>
+    </mat-form-field>
+
+
 
     <button *ngIf="isUser" mat-raised-button color="primary" class="add-file-btn" (click)="onAddFile()">
       <mat-icon>add</mat-icon>

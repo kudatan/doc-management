@@ -54,6 +54,7 @@ export class DashboardComponent implements OnInit {
   creatorFilter = signal<string | undefined>(undefined);
   userPage = signal(1);
   userSize = signal(5);
+  creatorEmailFilter = signal<string | undefined>(undefined);
   displayedColumns = ['name', 'status', 'createdAt', 'creator', 'updatedAt', 'action'];
 
 
@@ -105,6 +106,7 @@ export class DashboardComponent implements OnInit {
         size: this.size(),
         status: this.statusFilter() || undefined,
         creatorId: this.creatorFilter() || undefined,
+        creatorEmail: this.creatorEmailFilter() || undefined,
         sort: 'updatedAt,desc',
       })
       .subscribe((res) => {
@@ -166,6 +168,16 @@ export class DashboardComponent implements OnInit {
 
   onCreatorChange(creatorId: string | '') {
     this.creatorFilter.set(creatorId || undefined);
+    this.creatorEmailFilter.set(undefined);
+
+    this.page.set(1);
+    this.loadDocuments();
+  }
+
+  onCreatorEmailChange(email: string | '') {
+    this.creatorEmailFilter.set(email || undefined);
+    this.creatorFilter.set(undefined);
+
     this.page.set(1);
     this.loadDocuments();
   }
