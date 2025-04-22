@@ -43,3 +43,9 @@ input:-webkit-autofill:active {
   color: $error;
   font-size: 1.7rem;
 }
+
+.fullscreen-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

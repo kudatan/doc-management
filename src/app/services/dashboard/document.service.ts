@@ -44,4 +44,9 @@ export class DocumentService {
     return this.http.get<DocumentDto>(`${this.baseUrl}/${id}`);
   }
 
+  updateName(id: string, payload: { name: string }): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/${id}`, payload);
+  }
+
+
 }

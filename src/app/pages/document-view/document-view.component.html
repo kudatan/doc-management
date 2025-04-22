@@ -1,6 +1,37 @@
-<div class="doc-header">
-  <h2>{{ document()?.name }}</h2>
-  <p>Status: {{ document()?.status }}</p>
-</div>
+<ng-container *ngIf="!loading(); else loadingScreen">
+  <div class="doc-header">
+    <div *ngIf="isUser; else onlyName">
+      <mat-form-field appearance="outline">
+        <mat-label>Document name</mat-label>
+        <input
+          matInput
+          [value]="name()"
+          (input)="name.set($any($event.target).value)"
+        />
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="saveName()"
+        [disabled]="name().trim() === initialName().trim()"
+      >
+        Save
+      </button>
+    </div>
+
+    <ng-template #onlyName>
+      <h1>{{ document()?.name }}</h1>
+    </ng-template>
+
+    <p>Status: {{ document()?.status }}</p>
+
+  </div>
+</ng-container>
 
 <div id="pspdfkit-container" class="viewer-container"></div>
+<ng-template #loadingScreen>
+    <div class="fullscreen-loader">
+      <mat-spinner diameter="60"></mat-spinner>
+    </div>
+</ng-template>
