@@ -1,8 +1,10 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {DocumentListResponse, DocumentStatus} from '../../interfaces/dashboard.interface';
-
+import {
+  DocumentListResponse,
+  DocumentStatus,
+} from '../../interfaces/dashboard.interface';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentService {
@@ -23,9 +25,17 @@ export class DocumentService {
 
     if (params.sort) queryParams = queryParams.set('sort', params.sort);
     if (params.status) queryParams = queryParams.set('status', params.status);
-    if (params.creatorId) queryParams = queryParams.set('creatorId', params.creatorId);
-    if (params.creatorEmail) queryParams = queryParams.set('creatorEmail', params.creatorEmail);
+    if (params.creatorId)
+      queryParams = queryParams.set('creatorId', params.creatorId);
+    if (params.creatorEmail)
+      queryParams = queryParams.set('creatorEmail', params.creatorEmail);
 
-    return this.http.get<DocumentListResponse>(this.baseUrl, { params: queryParams });
+    return this.http.get<DocumentListResponse>(this.baseUrl, {
+      params: queryParams,
+    });
+  }
+
+  uploadDocument(formData: FormData): Observable<any> {
+    return this.http.post(this.baseUrl, formData);
   }
 }

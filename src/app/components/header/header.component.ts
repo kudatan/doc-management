@@ -4,7 +4,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatAnchor } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { LogoComponent } from '../../shared/icons/logo/logo.component';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 import {UserService} from '../../services/user/user.service';
 
 
@@ -17,7 +17,6 @@ import {UserService} from '../../services/user/user.service';
     RouterLink,
     LogoComponent,
     NgIf,
-    AsyncPipe,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',

@@ -5,14 +5,6 @@ export interface Creator {
   role: 'USER' | 'REVIEWER';
 }
 
-export type DocumentStatus =
-  | 'DRAFT'
-  | 'REVOKE'
-  | 'READY_FOR_REVIEW'
-  | 'UNDER_REVIEW'
-  | 'APPROVED'
-  | 'DECLINED';
-
 export interface DocumentDto {
   id: string;
   name: string;
@@ -22,6 +14,19 @@ export interface DocumentDto {
   createdAt: string;
   creator: Creator;
 }
+
+export interface DocumentListResponse {
+  results: DocumentDto[];
+  count: number;
+}
+
+export type DocumentStatus =
+  | 'DRAFT'
+  | 'REVOKE'
+  | 'READY_FOR_REVIEW'
+  | 'UNDER_REVIEW'
+  | 'APPROVED'
+  | 'DECLINED';
 
 export interface DocumentListResponse {
   results: DocumentDto[];

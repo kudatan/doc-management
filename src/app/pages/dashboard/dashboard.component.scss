@@ -6,10 +6,23 @@
   font-weight: 500;
   text-transform: uppercase;
   padding: 2rem;
+  margin: 20px 0;
+  text-align: center;
+  color: #666;
 }
 
 .dashboard {
+  padding: 20px;
+
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
   &-paginator {
+    margin-top: 20px;
     font-family: $montserrat;
     font-size: 1rem;
     font-weight: 500;
@@ -18,4 +31,14 @@
     bottom: 0;
     width: 100%;
   }
+}
+
+mat-card {
+  margin-bottom: 10px;
+}
+
+.add-file-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }

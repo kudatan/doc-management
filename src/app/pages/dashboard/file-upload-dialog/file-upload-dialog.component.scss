@@ -1,0 +1,25 @@
+.full-width {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.file-upload {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+
+  .file-name {
+    margin-left: 10px;
+    color: #666;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+  }
+}
+
+mat-dialog-content {
+  min-height: 150px;
+  min-width: 400px;
+}

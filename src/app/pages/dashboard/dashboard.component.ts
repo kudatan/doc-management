@@ -1,13 +1,22 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { NgIf, NgFor } from '@angular/common';
+import {NgIf, NgFor, DatePipe} from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
-import {DocumentDto, DocumentStatus} from '../../interfaces/dashboard.interface';
-import {DocumentService} from '../../services/dashboard/document.service';
-import {UserService} from '../../services/user/user.service';
-
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import {
+  DocumentDto,
+  DocumentStatus,
+} from '../../interfaces/dashboard.interface';
+import { DocumentService } from '../../services/dashboard/document.service';
+import { UserService } from '../../services/user/user.service';
+import { FileUploadDialogComponent } from './file-upload-dialog/file-upload-dialog.component';
+import {MatTableModule} from '@angular/material/table';
+import {MatSortModule, Sort} from '@angular/material/sort';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,7 +27,13 @@ import {UserService} from '../../services/user/user.service';
     MatFormFieldModule,
     MatSelectModule,
     MatPaginatorModule,
-    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDialogModule,
+    MatTableModule,
+    MatSortModule,
+    DatePipe,
+    MatInputModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
@@ -31,6 +46,8 @@ export class DashboardComponent implements OnInit {
   page = signal(1);
   size = signal(5);
   statusFilter = signal<DocumentStatus | undefined>(undefined);
+  displayedColumns = ['name', 'status', 'createdAt', 'creator', 'updatedAt'];
+
 
   statuses: DocumentStatus[] = [
     'DRAFT',
@@ -41,8 +58,11 @@ export class DashboardComponent implements OnInit {
     'DECLINED',
   ];
 
-  constructor(private documentService: DocumentService,
-              private userService: UserService,) {}
+  constructor(
+    private documentService: DocumentService,
+    private userService: UserService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     this.loadDocuments();
@@ -76,7 +96,42 @@ export class DashboardComponent implements OnInit {
     this.loadDocuments();
   }
 
-  onAddDocument() {
-    // this.router.navigate(['/document/new']);
+  onAddFile() {
+    const dialogRef = this.dialog.open(FileUploadDialogComponent, {
+      width: '500px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadDocuments();
+      }
+    });
   }
+
+  get isUser() {
+    return this.userService.isUser();
+  }
+
+  onSortChange(sort: Sort) {
+    const direction = sort.direction;
+    const active = sort.active;
+
+    if (!direction) {
+      this.loadDocuments();
+      return;
+    }
+
+    this.documentService
+      .getDocuments({
+        page: this.page(),
+        size: this.size(),
+        status: this.statusFilter() || undefined,
+        sort: `${active},${direction}`,
+      })
+      .subscribe((res) => {
+        this.documents.set(res.results);
+        this.total.set(res.count);
+      });
+  }
+
 }
