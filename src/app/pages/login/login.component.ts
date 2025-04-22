@@ -5,15 +5,15 @@ import { HttpClient } from '@angular/common/http';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { NgIf } from '@angular/common';
 import {ToastService} from '../../services/toast/toast.service';
+import {AuthService} from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, NgIf],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
 })
 export class LoginComponent implements OnInit {
   loading = signal(false);
@@ -23,7 +23,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private router: Router,
-    private toast: ToastService
+    private toast: ToastService,
+    private auth: AuthService
   ) {}
 
   ngOnInit() {
@@ -37,20 +38,17 @@ export class LoginComponent implements OnInit {
     if (this.form.invalid) return;
 
     this.loading.set(true);
-    this.http
-      .post<{
-        token: string;
-      }>('https://legaltech-testing.coobrick.app/api/v1/auth/login', this.form.value)
-      .subscribe({
-        next: res => {
-          localStorage.setItem('token', res.token);
-          this.toast.show('Logged in!', 'success');
-          this.router.navigate(['/dashboard']);
-        },
-        error: () => {
-          this.toast.show('Login failed. Please check your credentials.', 'error');
-          this.loading.set(false);
-        },
-      });
+
+    this.auth.login(this.form.value).subscribe({
+      next: (res) => {
+        this.auth.setToken(res.access_token);
+        this.toast.show('Logged in!', 'success');
+        this.router.navigate(['/dashboard']);
+      },
+      error: () => {
+        this.toast.show('Login failed. Please check your credentials.', 'error');
+        this.loading.set(false);
+      }
+    });
   }
 }
