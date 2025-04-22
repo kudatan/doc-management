@@ -11,8 +11,11 @@
     <ng-container *ngIf="user() as user; else guest">
       <div class="header-right-user">
         <span class="header-right-user-name">name : {{ user.fullName }}</span>
-        <span class="header-right-user-role"> role : {{ user.role }}</span>
+        <span class="header-right-user-role">role : {{ user.role }}</span>
       </div>
+      <button class="header-right-btn" mat-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+      </button>
     </ng-container>
 
     <ng-template #guest>

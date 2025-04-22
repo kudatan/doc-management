@@ -1,7 +1,11 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { LoginPayload, LoginResponse, RegisterPayload } from '../../interfaces/auth.interface';
+import { Observable, of } from 'rxjs';
+import {
+  LoginPayload,
+  LoginResponse,
+  RegisterPayload,
+} from '../../interfaces/auth.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +13,9 @@ import { LoginPayload, LoginResponse, RegisterPayload } from '../../interfaces/a
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = 'https://legaltech-testing.coobrick.app/api/v1';
-  private readonly tokenSignal = signal<string | null>(localStorage.getItem('auth-token'));
+  private readonly tokenSignal = signal<string | null>(
+    localStorage.getItem('auth-token')
+  );
 
   login(payload: LoginPayload): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.baseUrl}/auth/login`, payload);
@@ -17,6 +23,12 @@ export class AuthService {
 
   register(payload: RegisterPayload): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/user/register`, payload);
+  }
+
+  logout() {
+    this.setToken(null);
+    localStorage.removeItem('auth-token');
+    localStorage.clear();
   }
 
   setToken(token: string | null): void {

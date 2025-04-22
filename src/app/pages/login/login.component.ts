@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import {ToastService} from '../../services/toast/toast.service';
 import {AuthService} from '../../services/auth/auth.service';
+import {UserService} from '../../services/user/user.service';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
     private http: HttpClient,
     private router: Router,
     private toast: ToastService,
+    private userService: UserService,
     private auth: AuthService
   ) {}
 
@@ -42,6 +44,7 @@ export class LoginComponent implements OnInit {
     this.auth.login(this.form.value).subscribe({
       next: (res) => {
         this.auth.setToken(res.access_token);
+        this.userService.loadUser();
         this.toast.show('Logged in!', 'success');
         this.router.navigate(['/dashboard']);
       },
