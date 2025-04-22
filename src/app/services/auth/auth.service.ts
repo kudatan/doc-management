@@ -36,5 +36,11 @@ export class AuthService {
     return this.tokenSignal();
   }
 
-  token = this.tokenSignal.asReadonly(); // Якщо треба підписуватись в компоненті
+  logout() {
+    this.setToken(null);
+    localStorage.removeItem('auth-token');
+    localStorage.clear();
+  }
+
+  token = this.tokenSignal.asReadonly();
 }

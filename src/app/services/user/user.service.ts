@@ -1,8 +1,6 @@
-// src/app/core/services/user.service.ts
-import { inject, Injectable, computed, signal } from '@angular/core';
+import { inject, Injectable, computed, signal, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { toSignal } from '@angular/core/rxjs-interop';
-
+import { AuthService } from '../auth/auth.service';
 export interface User {
   id: string;
   email: string;
@@ -12,14 +10,28 @@ export interface User {
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private baseUrl = 'https://legaltech-testing.coobrick.app/api/v1';
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
 
-  readonly user$ = toSignal(this.http.get<User>(`${this.baseUrl}/user`), {
-    initialValue: null,
-  });
+  private userSignal = signal<User | null>(null);
+  readonly user$ = this.userSignal.asReadonly();
 
-  readonly role = computed(() => this.user$()?.role ?? null);
+  constructor() {
+    effect(() => {
+      const token = this.authService.token();
+      if (token) {
+        this.http.get<User>('https://legaltech-testing.coobrick.app/api/v1/user')
+          .subscribe({
+            next: (user) => this.userSignal.set(user),
+            error: () => this.userSignal.set(null),
+          });
+      } else {
+        this.userSignal.set(null);
+      }
+    });
+  }
+
+  readonly role = computed(() => this.userSignal()?.role ?? null);
   readonly isUser = computed(() => this.role() === 'USER');
   readonly isReviewer = computed(() => this.role() === 'REVIEWER');
 }
