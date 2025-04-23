@@ -1,9 +1,4 @@
-export interface Creator {
-  id: string;
-  email: string;
-  fullName: string;
-  role: 'USER' | 'REVIEWER';
-}
+import {User} from './user.interface';
 
 export interface DocumentDto {
   id: string;
@@ -12,7 +7,7 @@ export interface DocumentDto {
   fileUrl: string;
   updatedAt: string;
   createdAt: string;
-  creator: Creator;
+  creator: User;
 }
 
 export type DocumentStatus =
@@ -22,6 +17,11 @@ export type DocumentStatus =
   | 'UNDER_REVIEW'
   | 'APPROVED'
   | 'DECLINED';
+
+export type ReviewStatus = 'UNDER_REVIEW'
+  | 'APPROVED'
+  | 'DECLINED';
+
 
 export interface DocumentListResponse {
   results: DocumentDto[];

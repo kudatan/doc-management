@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import {
   DocumentDto,
   DocumentListResponse,
-  DocumentStatus,
+  DocumentStatus, ReviewStatus,
 } from '../../interfaces/dashboard.interface';
 import {environment} from '../../../environments/environment';
 
@@ -36,8 +36,8 @@ export class DocumentService {
     });
   }
 
-  uploadDocument(formData: FormData): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/document`, formData);
+  uploadDocument(formData: FormData): Observable<DocumentDto> {
+    return this.http.post<DocumentDto>(`${environment.apiUrl}/document`, formData);
   }
 
   sendToReview(id: string): Observable<void> {
@@ -60,7 +60,7 @@ export class DocumentService {
     return this.http.post<void>(`${environment.apiUrl}/document/${id}/revoke-review`, {});
   }
 
-  changeStatus(id: string, status: 'UNDER_REVIEW' | 'APPROVED' | 'DECLINED'): Observable<void> {
+  changeStatus(id: string, status: ReviewStatus): Observable<void> {
     return this.http.post<void>(`${environment.apiUrl}/document/${id}/change-status`, { status });
   }
 

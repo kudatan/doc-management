@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { DocumentService } from '../../services/dashboard/document.service';
 import { ToastService } from '../../services/toast/toast.service';
 import { UserService } from '../../services/user/user.service';
+import {ReviewStatus} from '../../interfaces/dashboard.interface';
 
 @Component({
   selector: 'app-document-view',
@@ -41,7 +42,7 @@ export class DocumentViewComponent implements OnInit {
   name = signal('');
   initialName = signal('');
   loading = signal(true);
-  selectedStatus = signal<'UNDER_REVIEW' | 'APPROVED' | 'DECLINED' | null>(null);
+  selectedStatus = signal<ReviewStatus  | null>(null);
   statusLoading = signal(false);
 
   user = this.userService.user$;
