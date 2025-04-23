@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, Input, input } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
@@ -9,5 +9,5 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   styleUrls: ['./loading-spinner.component.scss'],
 })
 export class LoadingSpinnerComponent {
-  diameter = input(100);
+  @Input() diameter: number = 100;
 }
