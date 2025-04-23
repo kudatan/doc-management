@@ -12,7 +12,6 @@
 }
 
 .dashboard {
-
   &-header {
     padding: 1.5rem 1.5rem 0;
     display: flex;
@@ -22,7 +21,7 @@
     @media (max-width: 830px) {
       flex-direction: column;
       align-items: flex-start;
-      gap: 0.5rem
+      gap: 0.5rem;
     }
   }
 
@@ -41,6 +40,14 @@
 
   &-table {
     margin: 1.5rem;
+
+    @media (max-width: 850px) {
+      overflow-x: auto;
+
+      table {
+        min-width: 850px; // Ensure table maintains minimum width
+      }
+    }
   }
 }
 
@@ -52,4 +59,11 @@ mat-card {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.fullscreen-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
