@@ -1,19 +1,19 @@
 import { TestBed } from '@angular/core/testing';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { AuthGuard } from './auth.guard';
-import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { lastValueFrom } from 'rxjs';
+
 describe('AuthGuard', () => {
   let guard: AuthGuard;
-  let authServiceSpy: jasmine.SpyObj<AuthService>;
-  let routerSpy: jasmine.SpyObj<Router>;
-
-  const mockRoute = {} as ActivatedRouteSnapshot;
-  const mockState = {} as RouterStateSnapshot;
+  let authService: jasmine.SpyObj<AuthService>;
+  let router: jasmine.SpyObj<Router>;
+  const routeMock: ActivatedRouteSnapshot = {} as ActivatedRouteSnapshot;
+  const stateMock: RouterStateSnapshot = { url: '/dashboard' } as RouterStateSnapshot;
 
   beforeEach(() => {
-    authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
-    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
+    const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     TestBed.configureTestingModule({
       providers: [
@@ -24,29 +24,29 @@ describe('AuthGuard', () => {
     });
 
     guard = TestBed.inject(AuthGuard);
+    authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+    router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
   });
 
   it('should be created', () => {
     expect(guard).toBeTruthy();
   });
 
-  it('should return Observable<true> if authenticated', (done) => {
-    authServiceSpy.isAuthenticated.and.returnValue(true);
+  it('should allow access when user is authenticated', async () => {
+    authService.isAuthenticated.and.returnValue(true);
 
-    guard.canActivate(mockRoute, mockState).subscribe((result) => {
-      expect(result).toBeTrue();
-      expect(routerSpy.navigate).not.toHaveBeenCalled();
-      done();
-    });
+    const result = await lastValueFrom(guard.canActivate(routeMock, stateMock));
+
+    expect(result).toBeTrue();
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('should navigate to /login and return Observable<false> if not authenticated', (done) => {
-    authServiceSpy.isAuthenticated.and.returnValue(false);
+  it('should redirect to login when user is not authenticated', async () => {
+    authService.isAuthenticated.and.returnValue(false);
 
-    guard.canActivate(mockRoute, mockState).subscribe((result) => {
-      expect(result).toBeFalse();
-      expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
-      done();
-    });
+    const result = await lastValueFrom(guard.canActivate(routeMock, stateMock));
+
+    expect(result).toBeFalse();
+    expect(router.navigate).toHaveBeenCalledWith(['/login']);
   });
 });

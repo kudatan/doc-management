@@ -1,16 +1,16 @@
 import { TestBed } from '@angular/core/testing';
-import { NoAuthGuard } from './no-auth.guard';
 import { Router } from '@angular/router';
+import { NoAuthGuard } from './no-auth.guard';
 import { AuthService } from '../../services/auth/auth.service';
 
 describe('NoAuthGuard', () => {
   let guard: NoAuthGuard;
-  let authServiceSpy: jasmine.SpyObj<AuthService>;
-  let routerSpy: jasmine.SpyObj<Router>;
+  let authService: jasmine.SpyObj<AuthService>;
+  let router: jasmine.SpyObj<Router>;
 
   beforeEach(() => {
-    authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
-    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
+    const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     TestBed.configureTestingModule({
       providers: [
@@ -21,23 +21,29 @@ describe('NoAuthGuard', () => {
     });
 
     guard = TestBed.inject(NoAuthGuard);
+    authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+    router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
   });
 
   it('should be created', () => {
     expect(guard).toBeTruthy();
   });
 
-  it('should return false and redirect if user is authenticated', () => {
-    authServiceSpy.isAuthenticated.and.returnValue(true);
+  it('should allow access when user is not authenticated', () => {
+    authService.isAuthenticated.and.returnValue(false);
+
     const result = guard.canActivate();
-    expect(result).toBeFalse();
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard']);
+
+    expect(result).toBeTrue();
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('should return true if user is not authenticated', () => {
-    authServiceSpy.isAuthenticated.and.returnValue(false);
+  it('should redirect to dashboard when user is already authenticated', () => {
+    authService.isAuthenticated.and.returnValue(true);
+
     const result = guard.canActivate();
-    expect(result).toBeTrue();
-    expect(routerSpy.navigate).not.toHaveBeenCalled();
+
+    expect(result).toBeFalse();
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
   });
 });
