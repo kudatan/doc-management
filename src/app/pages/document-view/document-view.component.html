@@ -9,11 +9,7 @@
       <ng-container *ngIf="isUser; else readonlyName">
         <mat-form-field appearance="outline">
           <mat-label>Document name</mat-label>
-          <input
-            matInput
-            [value]="name()"
-            (input)="name.set($any($event.target).value)"
-          />
+          <input matInput [value]="name()" (input)="name.set($any($event.target).value)" />
         </mat-form-field>
 
         <button
@@ -36,7 +32,7 @@
         Status: <span>{{ document()?.status }}</span>
       </p>
 
-      <div *ngIf="!isUser">
+      <ng-container *ngIf="!isUser">
         <mat-form-field appearance="fill" class="status-select">
           <mat-label>Change Status</mat-label>
           <mat-select
@@ -44,16 +40,16 @@
             (selectionChange)="selectedStatus.set($event.value); changeStatus()"
             [disabled]="statusLoading()"
           >
-            <mat-option value="UNDER_REVIEW">Under Review</mat-option>
-            <mat-option value="APPROVED">Approved</mat-option>
-            <mat-option value="DECLINED">Declined</mat-option>
+            <mat-option *ngFor="let status of ['UNDER_REVIEW', 'APPROVED', 'DECLINED']" [value]="status">
+              {{ status.replace('_', ' ').toLowerCase() | titlecase }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
-      </div>
+      </ng-container>
 
-      <div class="document-view-actions">
+      <div class="document-view-actions" *ngIf="isUser">
         <button
-          *ngIf="isUser && (document()?.status === 'DRAFT' || document()?.status === 'REVOKE')"
+          *ngIf="['DRAFT', 'REVOKE'].includes(document()?.status)"
           mat-raised-button
           color="warn"
           (click)="deleteDocument()"
@@ -62,7 +58,7 @@
         </button>
 
         <button
-          *ngIf="isUser && document()?.status === 'READY_FOR_REVIEW'"
+          *ngIf="document()?.status === 'READY_FOR_REVIEW'"
           mat-raised-button
           color="accent"
           (click)="revokeDocument()"
@@ -71,7 +67,7 @@
         </button>
 
         <button
-          *ngIf="isUser && document()?.status === 'DRAFT'"
+          *ngIf="document()?.status === 'DRAFT'"
           mat-raised-button
           color="primary"
           (click)="sendToReview()"
