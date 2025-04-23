@@ -1,8 +1,7 @@
-// eslint.config.js
 const tseslint = require('typescript-eslint');
 const angularTs = require('@angular-eslint/eslint-plugin');
-const angularHtml = require('@angular-eslint/eslint-plugin-template');
-const angularProcessor = require('@angular-eslint/template-parser');
+const angularTemplate = require('@angular-eslint/eslint-plugin-template');
+const angularHtmlParser = require('@angular-eslint/template-parser');
 const prettier = require('eslint-plugin-prettier');
 const unusedImports = require('eslint-plugin-unused-imports');
 
@@ -14,6 +13,7 @@ module.exports = [
       parser: tseslint.parser,
       parserOptions: {
         project: ['./tsconfig.json'],
+        tsconfigRootDir: __dirname,
         sourceType: 'module',
       },
     },
@@ -49,18 +49,17 @@ module.exports = [
       ],
     },
   },
-
   {
     files: ['**/*.html'],
     languageOptions: {
-      parser: angularProcessor.parser,
+      parser: angularHtmlParser,
     },
     plugins: {
-      '@angular-eslint/template': angularHtml,
+      '@angular-eslint/template': angularTemplate,
     },
     rules: {
-      ...angularHtml.configs.recommended.rules,
-      ...angularHtml.configs.accessibility.rules,
+      ...angularTemplate.configs.recommended.rules,
+      ...angularTemplate.configs.accessibility.rules,
     },
   },
 ];
