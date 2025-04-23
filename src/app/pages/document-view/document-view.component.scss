@@ -1,38 +1,21 @@
-@use "../../../styles/base/vars" as *;
-
-.viewer-container {
-  height: calc(100vh - 5rem);
-  padding: 0 1.5rem;
-}
+@use '../../../styles/base/vars' as *;
 
 .document-view {
-  padding: 1.5rem;
-
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   font-family: $montserrat;
 
-  &-header {
-    &-name, &-status {
-      font-weight: 500;
-
-      span {
-        font-weight: 700;
-        text-decoration: underline;
-      }
-    }
-
-    &-change-name {
-      button {
-        margin-left: 0.5rem;
-      }
-    }
+  &-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
   }
 
-  &-back {
-    margin-bottom: 1rem;
-  }
-
-  &-actions {
-    display: flex;
-    gap: 0.5rem;
+  &-pdf {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
   }
 }

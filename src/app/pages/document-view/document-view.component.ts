@@ -1,38 +1,33 @@
-import { Component, OnInit, inject, signal, DestroyRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
-import { MatIconModule } from '@angular/material/icon';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import NutrientPDFViewer from '@nutrient-sdk/viewer';
 
 import { DocumentService } from '../../services/dashboard/document.service';
 import { ToastService } from '../../services/toast/toast.service';
 import { UserService } from '../../services/user/user.service';
 import { ReviewStatus } from '../../interfaces/dashboard.interface';
+import { DocumentHeaderComponent } from '../../components/document-header/document-header.component';
+import { BackButtonComponent } from '../../components/back-button/back-button.component';
+import { PdfViewerComponent } from '../../components/pdf-viewer/pdf-viewer.component';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-document-view',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
     MatProgressSpinnerModule,
-    MatSelectModule,
-    MatIconModule,
+    DocumentHeaderComponent,
+    BackButtonComponent,
+    PdfViewerComponent,
+    LoadingSpinnerComponent,
   ],
   templateUrl: './document-view.component.html',
   styleUrls: ['./document-view.component.scss'],
 })
-export class DocumentViewComponent implements OnInit, OnDestroy {
+export class DocumentViewComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private documentService = inject(DocumentService);
@@ -47,15 +42,27 @@ export class DocumentViewComponent implements OnInit, OnDestroy {
   selectedStatus = signal<ReviewStatus | null>(null);
   statusLoading = signal(false);
 
-  user = this.userService.user$;
-  private nutrientPDFInstance: any = null;
-
   get isUser(): boolean {
     return this.userService.isUser();
   }
 
   get isReviewer(): boolean {
     return this.userService.isReviewer();
+  }
+
+  get canDelete(): boolean {
+    const doc = this.document();
+    return !!doc && this.isUser && ['DRAFT', 'REVOKE'].includes(doc.status);
+  }
+
+  get canRevoke(): boolean {
+    const doc = this.document();
+    return !!doc && this.isUser && doc.status === 'READY_FOR_REVIEW';
+  }
+
+  get canSendToReview(): boolean {
+    const doc = this.document();
+    return !!doc && this.isUser && doc.status === 'DRAFT';
   }
 
   ngOnInit(): void {
@@ -76,29 +83,14 @@ export class DocumentViewComponent implements OnInit, OnDestroy {
           this.document.set(doc);
           this.name.set(doc.name);
           this.initialName.set(doc.name);
-          this.initViewer(doc.fileUrl);
         },
         error: () => this.showError('Failed to load document'),
         complete: () => this.loading.set(false),
       });
   }
 
-  private async initViewer(fileUrl: string): Promise<void> {
-    if (this.nutrientPDFInstance) {
-      await this.nutrientPDFInstance.unload();
-      this.nutrientPDFInstance = null;
-    }
-
-    try {
-      this.nutrientPDFInstance = await NutrientPDFViewer.load({
-        container: '#nutrient-container',
-        document: fileUrl,
-        baseUrl: `${location.protocol}//${location.host}/assets/`,
-        theme: NutrientPDFViewer.Theme.DARK,
-      });
-    } catch (error) {
-      this.toast.show('Failed to load Nutrient viewer:', 'error');
-    }
+  onNameChange(newName: string): void {
+    this.name.set(newName);
   }
 
   saveName(): void {
@@ -122,7 +114,7 @@ export class DocumentViewComponent implements OnInit, OnDestroy {
 
   deleteDocument(): void {
     const doc = this.document();
-    if (!this.canDelete(doc)) return;
+    if (!doc?.id) return;
 
     this.documentService
       .deleteDocument(doc.id)
@@ -130,7 +122,7 @@ export class DocumentViewComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.toast.show('Document deleted', 'success');
-          history.back();
+          this.goBack();
         },
         error: () => this.showError('Failed to delete document'),
       });
@@ -138,7 +130,7 @@ export class DocumentViewComponent implements OnInit, OnDestroy {
 
   revokeDocument(): void {
     const doc = this.document();
-    if (!this.canRevoke(doc)) return;
+    if (!doc?.id) return;
 
     this.documentService
       .revokeReview(doc.id)
@@ -154,7 +146,7 @@ export class DocumentViewComponent implements OnInit, OnDestroy {
 
   sendToReview(): void {
     const doc = this.document();
-    if (!this.canSendToReview(doc)) return;
+    if (!doc?.id) return;
 
     this.documentService
       .sendToReview(doc.id)
@@ -168,11 +160,9 @@ export class DocumentViewComponent implements OnInit, OnDestroy {
       });
   }
 
-  changeStatus(): void {
+  changeStatus(status: ReviewStatus): void {
     const doc = this.document();
-    const status = this.selectedStatus();
-
-    if (!doc?.id || !this.userService.isReviewer() || !status) return;
+    if (!doc?.id || !this.userService.isReviewer()) return;
 
     this.statusLoading.set(true);
     this.documentService
@@ -229,25 +219,7 @@ export class DocumentViewComponent implements OnInit, OnDestroy {
     this.router.navigate(['/dashboard']);
   }
 
-  private canDelete(doc: any): boolean {
-    return !!doc && this.isUser && ['DRAFT', 'REVOKE'].includes(doc.status);
-  }
-
-  private canRevoke(doc: any): boolean {
-    return !!doc && this.isUser && doc.status === 'READY_FOR_REVIEW';
-  }
-
-  private canSendToReview(doc: any): boolean {
-    return !!doc && this.isUser && doc.status === 'DRAFT';
-  }
-
   private showError(message: string): void {
     this.toast.show(message, 'error');
-  }
-
-  ngOnDestroy() {
-    if (this.nutrientPDFInstance) {
-      NutrientPDFViewer.unload(this.nutrientPDFInstance);
-    }
   }
 }

@@ -1,104 +1,30 @@
-<ng-container *ngIf="!loading(); else loadingScreen">
-  <div class="document-view">
-    <button class="document-view-back" mat-stroked-button color="primary" (click)="goBack()">
-      <mat-icon>arrow_back</mat-icon>
-      Go Back
-    </button>
+<div class="document-view" *ngIf="!loading(); else loadingSpinner">
+  <div class="document-view-content">
+    <app-back-button (goBackEvent)="goBack()"></app-back-button>
 
-    <div class="document-view-header">
-      <ng-container *ngIf="isUser; else readonlyName">
-        <div class="document-view-header-change-name">
-          <mat-form-field appearance="outline">
-            <mat-label>Document name</mat-label>
-            <input matInput [value]="name()" (input)="name.set($any($event.target).value)" />
-          </mat-form-field>
-
-          <button
-            mat-raised-button
-            color="primary"
-            (click)="saveName()"
-            [disabled]="name().trim() === initialName().trim()"
-          >
-            Save
-          </button>
-        </div>
-      </ng-container>
-
-      <ng-template #readonlyName>
-        <h1 class="document-view-header-name">
-          Document name: <span>{{ document()?.name }}</span>
-        </h1>
-      </ng-template>
-
-      <p class="document-view-header-status">
-        Status: <span>{{ document()?.status }}</span>
-      </p>
-
-      <ng-container *ngIf="isReviewer && document()?.status === 'UNDER_REVIEW'">
-        <mat-form-field appearance="fill" class="status-select">
-          <mat-label>Change Status</mat-label>
-          <mat-select
-            [value]="document()?.status"
-            (selectionChange)="selectedStatus.set($event.value); changeStatus()"
-            [disabled]="statusLoading()"
-          >
-            <mat-option *ngFor="let status of ['APPROVED', 'DECLINED']" [value]="status">
-              {{ status.replace('_', ' ').toLowerCase() | titlecase }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </ng-container>
-
-      <ng-container *ngIf="isReviewer && document()?.status === 'READY_FOR_REVIEW'">
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="setUnderReview()"
-          [disabled]="statusLoading()"
-        >
-          Mark as Under Review
-        </button>
-      </ng-container>
-
-
-      <div class="document-view-actions" *ngIf="isUser">
-        <button
-          *ngIf="['DRAFT', 'REVOKE'].includes(document()?.status)"
-          mat-raised-button
-          color="warn"
-          (click)="deleteDocument()"
-        >
-          Delete
-        </button>
-
-        <button
-          *ngIf="document()?.status === 'READY_FOR_REVIEW'"
-          mat-raised-button
-          color="accent"
-          (click)="revokeDocument()"
-        >
-          Revoke from Review
-        </button>
-
-        <button
-          *ngIf="document()?.status === 'DRAFT'"
-          mat-raised-button
-          color="primary"
-          (click)="sendToReview()"
-        >
-          Send to Review
-        </button>
-      </div>
-    </div>
+    <app-document-header
+      [document]="document()"
+      [isUser]="isUser"
+      [isReviewer]="isReviewer"
+      [statusLoading]="statusLoading()"
+      [canDelete]="canDelete"
+      [canRevoke]="canRevoke"
+      [canSendToReview]="canSendToReview"
+      (nameChange)="onNameChange($event)"
+      (saveNameEvent)="saveName()"
+      (deleteDocumentEvent)="deleteDocument()"
+      (revokeDocumentEvent)="revokeDocument()"
+      (sendToReviewEvent)="sendToReview()"
+      (changeStatusEvent)="changeStatus($event)"
+      (setUnderReviewEvent)="setUnderReview()"
+    ></app-document-header>
   </div>
-</ng-container>
 
-<div class="document-content">
-  <div id="nutrient-container" class="viewer-container"></div>
+  <div class="document-view-pdf">
+    <app-pdf-viewer [fileUrl]="document()?.fileUrl"></app-pdf-viewer>
+  </div>
 </div>
 
-<ng-template #loadingScreen>
-  <div class="fullscreen-loader">
-    <mat-spinner diameter="100"></mat-spinner>
-  </div>
+<ng-template #loadingSpinner>
+  <app-loading-spinner [diameter]="100"></app-loading-spinner>
 </ng-template>
