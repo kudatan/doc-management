@@ -1,27 +1,27 @@
 .filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 1rem;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 
   &-field {
-    min-width: 200px;
+    min-width: 12.5rem;
   }
 
   &-pagination {
     display: flex;
     justify-content: space-between;
-    padding: 8px 16px;
+    padding: 0.5rem 1rem;
   }
 
   &-pagination-button {
-    font-size: 14px;
+    font-size: 0.8rem;
   }
 
   &-reset {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
   }
 }

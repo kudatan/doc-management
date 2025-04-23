@@ -6,7 +6,7 @@
 
   .full-width {
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
   }
 
   &-doc-name {
@@ -28,22 +28,22 @@
   .file-upload {
     display: flex;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 0.9rem;
 
     .file-name {
-      margin-left: 10px;
+      margin-left: 0.6rem;
       color: #666;
-      font-size: 14px;
+      font-size: 0.8rem;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      max-width: 200px;
+      max-width: 12.5rem;
     }
   }
 
   mat-dialog-content {
-    min-height: 150px;
-    min-width: 400px;
+    min-height: 9.375rem;
+    min-width: 25rem;
   }
 }
 

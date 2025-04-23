@@ -1,20 +1,20 @@
 @use "../../../styles/base/vars" as *;
 
 .dashboard {
-  padding: 16px;
+  padding: 1rem;
 
   &-header {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 1rem;
     align-items: flex-start;
-    margin-bottom: 16px;
+    margin-bottom: 1rem;
 
     justify-content: space-between;
   }
 
   &-paginator {
-    margin-top: 16px;
+    margin-top: 1rem;
     font-family: $montserrat;
     font-size: 1rem;
     font-weight: 500;

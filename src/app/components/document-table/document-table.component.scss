@@ -1,12 +1,12 @@
 .document-table {
   overflow-x: auto;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 
   @media (max-width: 850px) {
     overflow-x: auto;
 
     table {
-      min-width: 850px;
+      min-width: 53.125rem;
     }
   }
 
@@ -20,21 +20,21 @@
 
   &-header-cell,
   &-cell {
-    padding: 0 16px !important;
+    padding: 0 1rem !important;
   }
 
   &-action-button {
-    min-width: 90px;
+    min-width: 5.6rem;
   }
 
   &-empty {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 48px;
-    font-size: 18px;
+    padding: 3rem;
+    font-size: 1.125rem;
     color: rgba(0, 0, 0, 0.54);
-    border-radius: 4px;
+    border-radius: 0.25rem;
     background-color: #f5f5f5;
   }
 }

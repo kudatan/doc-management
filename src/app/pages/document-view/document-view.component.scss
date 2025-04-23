@@ -1,20 +1,20 @@
 @use '../../../styles/base/vars' as *;
 
 .document-view {
-  padding: 24px;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 1.5rem;
   font-family: $montserrat;
 
   &-content {
-    max-width: 1200px;
+    max-width: 75rem;
     margin: 0 auto;
     width: 100%;
   }
 
   &-pdf {
-    max-width: 1200px;
+    max-width: 75rem;
     margin: 0 auto;
     width: 100%;
   }
