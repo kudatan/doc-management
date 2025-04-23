@@ -1,7 +1,6 @@
-// src/app/components/header/header.component.ts
 import { Component, computed, effect, inject } from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatAnchor } from '@angular/material/button';
+import {MatAnchor, MatButtonModule} from '@angular/material/button';
 import {Router, RouterLink} from '@angular/router';
 import { LogoComponent } from '../../shared/icons/logo/logo.component';
 import { NgIf } from '@angular/common';
@@ -20,6 +19,7 @@ import {MatIconModule} from '@angular/material/icon';
     LogoComponent,
     NgIf,
     MatIconModule,
+    MatButtonModule,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',

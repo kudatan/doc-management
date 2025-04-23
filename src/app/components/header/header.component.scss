@@ -20,6 +20,10 @@
       flex-direction: column;
       line-height: 1;
 
+      @media (max-width: 442px) {
+        display: none;
+      }
+
       &-description {
         font-size: 1rem;
         font-weight: 500;
@@ -42,6 +46,10 @@
 
       font-size: 1rem;
       font-weight: 500;
+
+      mat-icon {
+        margin: 0;
+      }
     }
 
     &-user {
