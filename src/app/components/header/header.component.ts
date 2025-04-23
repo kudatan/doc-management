@@ -1,26 +1,17 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
-import {MatAnchor, MatButtonModule} from '@angular/material/button';
-import {Router, RouterLink} from '@angular/router';
+import { MatAnchor, MatButtonModule } from '@angular/material/button';
+import { Router, RouterLink } from '@angular/router';
 import { LogoComponent } from '../../shared/icons/logo/logo.component';
 import { NgIf } from '@angular/common';
-import {UserService} from '../../services/user/user.service';
-import {AuthService} from '../../services/auth/auth.service';
-import {MatIconModule} from '@angular/material/icon';
-
+import { UserService } from '../../services/user/user.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [
-    MatToolbar,
-    MatAnchor,
-    RouterLink,
-    LogoComponent,
-    NgIf,
-    MatIconModule,
-    MatButtonModule,
-  ],
+  imports: [MatToolbar, MatAnchor, RouterLink, LogoComponent, NgIf, MatIconModule, MatButtonModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

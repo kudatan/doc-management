@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  DestroyRef,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnInit, inject, signal, DestroyRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -104,7 +97,7 @@ export class DocumentViewComponent implements OnInit, OnDestroy {
         theme: NutrientPDFViewer.Theme.DARK,
       });
     } catch (error) {
-      this.toast.show("Failed to load Nutrient viewer:", 'error');
+      this.toast.show('Failed to load Nutrient viewer:', 'error');
     }
   }
 

@@ -64,9 +64,9 @@ export class RegisterComponent implements OnInit {
             Array.isArray(message)
               ? message.join(', ')
               : typeof message === 'string'
-              ? message
-              : 'Registration failed. Try a different email.',
-            'error'
+                ? message
+                : 'Registration failed. Try a different email.',
+            'error',
           );
           this.loading.set(false);
         },

@@ -5,17 +5,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DocumentService } from '../../services/dashboard/document.service';
 import { ToastService } from '../../services/toast/toast.service';
 import { DocumentDto } from '../../interfaces/dashboard.interface';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-file-upload-dialog',
@@ -86,10 +81,7 @@ export class FileUploadDialogComponent {
               .pipe(takeUntilDestroyed(this.destroyRef))
               .subscribe({
                 next: () => {
-                  this.toast.show(
-                    'Document sent to review successfully',
-                    'success'
-                  );
+                  this.toast.show('Document sent to review successfully', 'success');
                   this.loading.set(false);
                   this.dialogRef.close(true);
                 },

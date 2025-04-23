@@ -14,12 +14,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   standalone: true,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-  ],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
 })
 export class LoginComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -54,10 +49,7 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/dashboard']);
         },
         error: () => {
-          this.toast.show(
-            'Login failed. Please check your credentials.',
-            'error'
-          );
+          this.toast.show('Login failed. Please check your credentials.', 'error');
           this.loading.set(false);
         },
       });

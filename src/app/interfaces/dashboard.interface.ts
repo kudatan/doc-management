@@ -1,4 +1,4 @@
-import {User} from './user.interface';
+import { User } from './user.interface';
 
 export interface DocumentDto {
   id: string;
@@ -18,10 +18,7 @@ export type DocumentStatus =
   | 'APPROVED'
   | 'DECLINED';
 
-export type ReviewStatus = 'UNDER_REVIEW'
-  | 'APPROVED'
-  | 'DECLINED';
-
+export type ReviewStatus = 'UNDER_REVIEW' | 'APPROVED' | 'DECLINED';
 
 export interface DocumentListResponse {
   results: DocumentDto[];

@@ -1,16 +1,9 @@
-import {
-  inject,
-  Injectable,
-  computed,
-  signal,
-  effect,
-  DestroyRef,
-} from '@angular/core';
+import { inject, Injectable, computed, signal, effect, DestroyRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth/auth.service';
 import { map, Observable } from 'rxjs';
-import { User, RoleType } from '../../interfaces/user.interface';
-import {environment} from '../../../environments/environment';
+import { User } from '../../interfaces/user.interface';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -24,12 +17,10 @@ export class UserService {
   private readonly userEffect = effect(() => {
     const token = this.authService.token();
     if (token) {
-      this.http
-        .get<User>(`${environment.apiUrl}/user`)
-        .subscribe({
-          next: (user) => this.userSignal.set(user),
-          error: () => this.userSignal.set(null),
-        });
+      this.http.get<User>(`${environment.apiUrl}/user`).subscribe({
+        next: (user) => this.userSignal.set(user),
+        error: () => this.userSignal.set(null),
+      });
     } else {
       this.userSignal.set(null);
     }
@@ -44,15 +35,12 @@ export class UserService {
   getAllUsers(page = 1, size = 10): Observable<User[]> {
     return this.http
 
-      .get<{ results: User[] }>(
-        `${environment.apiUrl}/user/users`,
-        {
-          params: {
-            page,
-            size,
-          },
-        }
-      )
+      .get<{ results: User[] }>(`${environment.apiUrl}/user/users`, {
+        params: {
+          page,
+          size,
+        },
+      })
       .pipe(map((res) => res.results));
   }
 

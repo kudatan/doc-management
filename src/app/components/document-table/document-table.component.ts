@@ -10,14 +10,7 @@ import { DOCUMENT_TABLE_COLUMNS } from '../../constants/dashboard.constants';
 @Component({
   selector: 'app-document-table',
   standalone: true,
-  imports: [
-    NgIf,
-    MatTableModule,
-    MatSortModule,
-    MatButtonModule,
-    DatePipe,
-    RouterLink,
-  ],
+  imports: [NgIf, MatTableModule, MatSortModule, MatButtonModule, DatePipe, RouterLink],
   templateUrl: './document-table.component.html',
   styleUrls: ['./document-table.component.scss'],
 })

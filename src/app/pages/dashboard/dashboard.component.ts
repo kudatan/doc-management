@@ -2,10 +2,7 @@ import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
-import {
-  DocumentDto,
-  DocumentStatus,
-} from '../../interfaces/dashboard.interface';
+import { DocumentDto, DocumentStatus } from '../../interfaces/dashboard.interface';
 import { DocumentService } from '../../services/dashboard/document.service';
 import { FileUploadDialogComponent } from '../../components/file-upload-dialog/file-upload-dialog.component';
 import { Sort } from '@angular/material/sort';

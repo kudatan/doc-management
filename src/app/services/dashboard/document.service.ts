@@ -4,9 +4,10 @@ import { Observable } from 'rxjs';
 import {
   DocumentDto,
   DocumentListResponse,
-  DocumentStatus, ReviewStatus,
+  DocumentStatus,
+  ReviewStatus,
 } from '../../interfaces/dashboard.interface';
-import {environment} from '../../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentService {
@@ -20,16 +21,12 @@ export class DocumentService {
     creatorId?: string;
     creatorEmail?: string;
   }): Observable<DocumentListResponse> {
-    let queryParams = new HttpParams()
-      .set('page', params.page)
-      .set('size', params.size);
+    let queryParams = new HttpParams().set('page', params.page).set('size', params.size);
 
     if (params.sort) queryParams = queryParams.set('sort', params.sort);
     if (params.status) queryParams = queryParams.set('status', params.status);
-    if (params.creatorId)
-      queryParams = queryParams.set('creatorId', params.creatorId);
-    if (params.creatorEmail)
-      queryParams = queryParams.set('creatorEmail', params.creatorEmail);
+    if (params.creatorId) queryParams = queryParams.set('creatorId', params.creatorId);
+    if (params.creatorEmail) queryParams = queryParams.set('creatorEmail', params.creatorEmail);
 
     return this.http.get<DocumentListResponse>(`${environment.apiUrl}/document`, {
       params: queryParams,
@@ -63,5 +60,4 @@ export class DocumentService {
   changeStatus(id: string, status: ReviewStatus): Observable<void> {
     return this.http.post<void>(`${environment.apiUrl}/document/${id}/change-status`, { status });
   }
-
 }

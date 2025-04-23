@@ -67,9 +67,7 @@ export class DocumentFiltersComponent implements OnChanges {
   }
 
   readonly filteredStatuses = computed(() => {
-    return this.isUser
-      ? this.statuses
-      : this.statuses.filter((status) => status !== 'DRAFT');
+    return this.isUser ? this.statuses : this.statuses.filter((status) => status !== 'DRAFT');
   });
 
   onStatusChange(status: DocumentStatus | '') {
