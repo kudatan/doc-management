@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import {Component, computed, OnInit, signal} from '@angular/core';
 import {NgIf, NgFor, DatePipe} from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -100,22 +100,55 @@ export class DashboardComponent implements OnInit {
     this.loadUsers();
   }
 
+  readonly filteredStatuses = computed(() => {
+    return this.isUser
+      ? this.statuses
+      : this.statuses.filter((status) => status !== 'DRAFT');
+  });
+
   loadDocuments() {
     this.loading.set(true);
-    this.documentService
-      .getDocuments({
-        page: this.page(),
-        size: this.size(),
-        status: this.statusFilter() || undefined,
-        creatorId: this.creatorFilter() || undefined,
-        creatorEmail: this.creatorEmailFilter() || undefined,
-        sort: 'updatedAt,desc',
-      })
-      .subscribe((res) => {
-        this.documents.set(res.results);
-        this.total.set(res.count);
-        this.loading.set(false);
-      });
+
+    const pageSize = 50;
+    let currentPage = 1;
+    let allDocs: DocumentDto[] = [];
+
+    const fetchNextPage = () => {
+      this.documentService
+        .getDocuments({
+          page: currentPage,
+          size: pageSize,
+          status: this.statusFilter() || undefined,
+          creatorId: this.creatorFilter() || undefined,
+          creatorEmail: this.creatorEmailFilter() || undefined,
+          sort: 'updatedAt,desc',
+        })
+        .subscribe((res) => {
+          const pageDocs = res.results;
+          allDocs = [...allDocs, ...pageDocs];
+
+          if (pageDocs.length === pageSize) {
+            currentPage++;
+            fetchNextPage();
+          } else {
+            if (!this.isUser) {
+              allDocs = allDocs.filter((doc) => doc.status !== 'DRAFT');
+              console.log(allDocs.length)
+            }
+
+            this.total.set(allDocs.length);
+
+            const start = (this.page() - 1) * this.size();
+            const end = start + this.size();
+            const paginated = allDocs.slice(start, end);
+
+            this.documents.set(paginated);
+            this.loading.set(false);
+          }
+        });
+    };
+
+    fetchNextPage();
   }
 
   onStatusChange(status: DocumentStatus | '') {
