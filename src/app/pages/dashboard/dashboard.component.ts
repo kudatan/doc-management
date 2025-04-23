@@ -13,7 +13,7 @@ import {
 } from '../../interfaces/dashboard.interface';
 import { DocumentService } from '../../services/dashboard/document.service';
 import {User, UserService} from '../../services/user/user.service';
-import { FileUploadDialogComponent } from './file-upload-dialog/file-upload-dialog.component';
+import { FileUploadDialogComponent } from '../../components/file-upload-dialog/file-upload-dialog.component';
 import {MatTableModule} from '@angular/material/table';
 import {MatSortModule, Sort} from '@angular/material/sort';
 import { MatInputModule } from '@angular/material/input';

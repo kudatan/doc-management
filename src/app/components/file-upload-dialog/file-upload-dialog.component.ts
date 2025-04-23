@@ -11,8 +11,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { DocumentService } from '../../../services/dashboard/document.service';
-import { ToastService } from '../../../services/toast/toast.service';
+import { DocumentService } from '../../services/dashboard/document.service';
+import { ToastService } from '../../services/toast/toast.service';
+import {DocumentDto} from '../../interfaces/dashboard.interface';
 
 @Component({
   selector: 'app-file-upload-dialog',
@@ -67,13 +68,28 @@ export class FileUploadDialogComponent {
     const formData = new FormData();
     formData.append('file', this.selectedFile);
     formData.append('name', this.form.value.name);
-    formData.append('status', this.form.value.status);
-
+    formData.append('status', 'DRAFT');
     this.documentService.uploadDocument(formData).subscribe({
-      next: () => {
-        this.toast.show('File uploaded successfully', 'success');
-        this.loading.set(false);
-        this.dialogRef.close(true);
+      next: (res: DocumentDto) => {
+        const selectedStatus = this.form.value.status;
+
+        if (selectedStatus === 'READY_FOR_REVIEW') {
+          this.documentService.sendToReview(res.id).subscribe({
+            next: () => {
+              this.toast.show('Document sent to review successfully', 'success');
+              this.loading.set(false);
+              this.dialogRef.close(true);
+            },
+            error: () => {
+              this.toast.show('Failed to send document to review', 'error');
+              this.loading.set(false);
+            },
+          });
+        } else {
+          this.toast.show('File uploaded successfully', 'success');
+          this.loading.set(false);
+          this.dialogRef.close(true);
+        }
       },
       error: () => {
         this.toast.show('File upload failed', 'error');
@@ -81,4 +97,5 @@ export class FileUploadDialogComponent {
       },
     });
   }
+
 }

@@ -40,6 +40,10 @@ export class DocumentService {
     return this.http.post(this.baseUrl, formData);
   }
 
+  sendToReview(id: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/${id}/send-to-review`, {});
+  }
+
   getById(id: string): Observable<DocumentDto> {
     return this.http.get<DocumentDto>(`${this.baseUrl}/${id}`);
   }
