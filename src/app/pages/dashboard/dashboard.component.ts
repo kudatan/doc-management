@@ -1,5 +1,5 @@
-import {Component, computed, OnInit, signal} from '@angular/core';
-import {NgIf, NgFor, DatePipe} from '@angular/common';
+import { Component, computed, OnInit, signal } from '@angular/core';
+import { NgIf, NgFor, DatePipe } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -12,14 +12,14 @@ import {
   DocumentStatus,
 } from '../../interfaces/dashboard.interface';
 import { DocumentService } from '../../services/dashboard/document.service';
-import {User, UserService} from '../../services/user/user.service';
+import { User, UserService } from '../../services/user/user.service';
 import { FileUploadDialogComponent } from '../../components/file-upload-dialog/file-upload-dialog.component';
-import {MatTableModule} from '@angular/material/table';
-import {MatSortModule, Sort} from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatInputModule } from '@angular/material/input';
-import {RouterLink} from '@angular/router';
-import {MatDivider, MatDividerModule} from '@angular/material/divider';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { RouterLink } from '@angular/router';
+import { MatDivider, MatDividerModule } from '@angular/material/divider';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-dashboard',
@@ -57,8 +57,14 @@ export class DashboardComponent implements OnInit {
   userPage = signal(1);
   userSize = signal(5);
   creatorEmailFilter = signal<string | undefined>(undefined);
-  displayedColumns = ['name', 'status', 'createdAt', 'creator', 'updatedAt', 'action'];
-
+  displayedColumns = [
+    'name',
+    'status',
+    'createdAt',
+    'creator',
+    'updatedAt',
+    'action',
+  ];
 
   statuses: DocumentStatus[] = [
     'DRAFT',
@@ -84,19 +90,18 @@ export class DashboardComponent implements OnInit {
   }
 
   loadUsers() {
-    this.userService.getAllUsers(this.userPage(), this.userSize()).subscribe((users) => {
-      this.users.set(users);
+    this.userService.getAllUsers(this.userPage(), this.userSize()).subscribe({
+      next: (users) => this.users.set(users)
     });
   }
 
   nextUserPage() {
-    this.userPage.set(this.userPage() + 1);
+    this.userPage.update((page) => page + 1);
     this.loadUsers();
   }
 
   prevUserPage() {
-    const newPage = Math.max(1, this.userPage() - 1);
-    this.userPage.set(newPage);
+    this.userPage.update((page) => Math.max(1, page - 1));
     this.loadUsers();
   }
 
@@ -123,37 +128,46 @@ export class DashboardComponent implements OnInit {
           creatorEmail: this.creatorEmailFilter() || undefined,
           sort: 'updatedAt,desc',
         })
-        .subscribe((res) => {
-          const pageDocs = res.results;
-          allDocs = [...allDocs, ...pageDocs];
+        .subscribe({
+          next: (res) => {
+            const pageDocs = res.results;
+            allDocs = [...allDocs, ...pageDocs];
 
-          if (pageDocs.length === pageSize) {
-            currentPage++;
-            fetchNextPage();
-          } else {
-            if (!this.isUser) {
-              allDocs = allDocs.filter((doc) => doc.status !== 'DRAFT');
-              console.log(allDocs.length)
+            if (pageDocs.length === pageSize) {
+              currentPage++;
+              fetchNextPage();
+            } else {
+              this.processDocuments(allDocs);
             }
-
-            this.total.set(allDocs.length);
-
-            const start = (this.page() - 1) * this.size();
-            const end = start + this.size();
-            const paginated = allDocs.slice(start, end);
-
-            this.documents.set(paginated);
+          },
+          error: (err) => {
+            console.error('Failed to load documents:', err);
             this.loading.set(false);
-          }
+          },
         });
     };
 
     fetchNextPage();
   }
 
+  private processDocuments(allDocs: DocumentDto[]) {
+    if (!this.isUser) {
+      allDocs = allDocs.filter((doc) => doc.status !== 'DRAFT');
+    }
+
+    this.total.set(allDocs.length);
+
+    const start = (this.page() - 1) * this.size();
+    const end = start + this.size();
+    const paginated = allDocs.slice(start, end);
+
+    this.documents.set(paginated);
+    this.loading.set(false);
+  }
+
   onStatusChange(status: DocumentStatus | '') {
     this.statusFilter.set(status || undefined);
-    this.page.set(1);
+    this.resetToFirstPage();
     this.loadDocuments();
   }
 
@@ -180,10 +194,7 @@ export class DashboardComponent implements OnInit {
   }
 
   onSortChange(sort: Sort) {
-    const direction = sort.direction;
-    const active = sort.active;
-
-    if (!direction) {
+    if (!sort.direction) {
       this.loadDocuments();
       return;
     }
@@ -193,27 +204,30 @@ export class DashboardComponent implements OnInit {
         page: this.page(),
         size: this.size(),
         status: this.statusFilter() || undefined,
-        sort: `${active},${direction}`,
+        creatorId: this.creatorFilter() || undefined,
+        creatorEmail: this.creatorEmailFilter() || undefined,
+        sort: `${sort.active},${sort.direction}`,
       })
-      .subscribe((res) => {
-        this.documents.set(res.results);
-        this.total.set(res.count);
+      .subscribe({
+        next: (res) => {
+          this.documents.set(res.results);
+          this.total.set(res.count);
+        },
+        error: (err) => console.error('Failed to sort documents:', err),
       });
   }
 
   onCreatorChange(creatorId: string | '') {
     this.creatorFilter.set(creatorId || undefined);
     this.creatorEmailFilter.set(undefined);
-
-    this.page.set(1);
+    this.resetToFirstPage();
     this.loadDocuments();
   }
 
   onCreatorEmailChange(email: string | '') {
     this.creatorEmailFilter.set(email || undefined);
     this.creatorFilter.set(undefined);
-
-    this.page.set(1);
+    this.resetToFirstPage();
     this.loadDocuments();
   }
 
@@ -221,10 +235,11 @@ export class DashboardComponent implements OnInit {
     this.statusFilter.set(undefined);
     this.creatorFilter.set(undefined);
     this.creatorEmailFilter.set(undefined);
-    this.page.set(1);
-
+    this.resetToFirstPage();
     this.loadDocuments();
   }
 
-
+  private resetToFirstPage() {
+    this.page.set(1);
+  }
 }

@@ -1,8 +1,11 @@
-<div *ngIf="!loading(); else loader" class="dashboard">
+<div class="dashboard" *ngIf="!loading(); else loader">
   <div class="dashboard-header">
     <mat-form-field appearance="fill">
       <mat-label>Status</mat-label>
-      <mat-select [value]="statusFilter()" (selectionChange)="onStatusChange($event.value)">
+      <mat-select
+        [value]="statusFilter()"
+        (selectionChange)="onStatusChange($event.value)"
+      >
         <mat-option value="">All</mat-option>
         <mat-option *ngFor="let status of filteredStatuses()" [value]="status">
           {{ status }}
@@ -10,90 +13,128 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field *ngIf="!isUser" appearance="fill">
-      <mat-label>Creator</mat-label>
-      <mat-select [value]="creatorFilter()" (selectionChange)="onCreatorChange($event.value)">
-        <mat-option value="">All</mat-option>
-        <mat-option *ngFor="let user of users()" [value]="user.id">
-          {{ user.fullName }}
-        </mat-option>
-        <mat-divider></mat-divider>
-        <div class="pagination-controls">
-          <button mat-button (click)="prevUserPage()">← Prev</button>
-          <button mat-button (click)="nextUserPage()">Next →</button>
-        </div>
-      </mat-select>
-    </mat-form-field>
+    <ng-container *ngIf="!isUser">
+      <mat-form-field appearance="fill">
+        <mat-label>Creator</mat-label>
+        <mat-select
+          [value]="creatorFilter()"
+          (selectionChange)="onCreatorChange($event.value)"
+        >
+          <mat-option value="">All</mat-option>
+          <mat-option *ngFor="let user of users()" [value]="user.id">
+            {{ user.fullName }}
+          </mat-option>
+          <mat-divider></mat-divider>
+          <div class="pagination-controls">
+            <button mat-button (click)="prevUserPage()">← Prev</button>
+            <button mat-button (click)="nextUserPage()">Next →</button>
+          </div>
+        </mat-select>
+      </mat-form-field>
 
-    <mat-form-field *ngIf="!isUser" appearance="fill">
-      <mat-label>Email</mat-label>
-      <mat-select [value]="creatorEmailFilter()" (selectionChange)="onCreatorEmailChange($event.value)">
-        <mat-option value="">All</mat-option>
-        <mat-option *ngFor="let user of users()" [value]="user.email">
-          {{ user.email }}
-        </mat-option>
-        <mat-divider></mat-divider>
-        <div class="pagination-controls">
-          <button mat-button (click)="prevUserPage()">← Prev</button>
-          <button mat-button (click)="nextUserPage()">Next →</button>
-        </div>
-      </mat-select>
-    </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <mat-select
+          [value]="creatorEmailFilter()"
+          (selectionChange)="onCreatorEmailChange($event.value)"
+        >
+          <mat-option value="">All</mat-option>
+          <mat-option *ngFor="let user of users()" [value]="user.email">
+            {{ user.email }}
+          </mat-option>
+          <mat-divider></mat-divider>
+          <div class="pagination-controls">
+            <button mat-button (click)="prevUserPage()">← Prev</button>
+            <button mat-button (click)="nextUserPage()">Next →</button>
+          </div>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
 
     <button mat-button color="warn" (click)="resetFilters()">
       <mat-icon>filter_alt_off</mat-icon>
       Reset Filters
     </button>
 
-    <button *ngIf="isUser" mat-raised-button color="primary" class="add-file-btn" (click)="onAddFile()">
+    <button
+      *ngIf="isUser"
+      mat-raised-button
+      color="primary"
+      class="add-file-btn"
+      (click)="onAddFile()"
+    >
       <mat-icon>add</mat-icon>
       Add New File
     </button>
   </div>
 
   <div class="dashboard-table">
-    <div *ngIf="documents().length === 0; else documentsTable" class="no-documents">No documents :(</div>
+    <div
+      *ngIf="documents().length === 0; else documentsTable"
+      class="no-documents"
+    >
+      No documents :(
+    </div>
 
     <ng-template #documentsTable>
-    <table mat-table [dataSource]="documents()" matSort class="mat-elevation-z2" (matSortChange)="onSortChange($event)" >
+      <table
+        mat-table
+        [dataSource]="documents()"
+        matSort
+        class="mat-elevation-z2"
+        (matSortChange)="onSortChange($event)"
+      >
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <td mat-cell *matCellDef="let doc">{{ doc.name }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-        <td mat-cell *matCellDef="let doc">{{ doc.name }}</td>
-      </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let doc">{{ doc.status }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Status</th>
-        <td mat-cell *matCellDef="let doc">{{ doc.status }}</td>
-      </ng-container>
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+          <td mat-cell *matCellDef="let doc">
+            {{ doc.createdAt | date : "dd-MM-yyyy HH:mm" }}
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="createdAt">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
-        <td mat-cell *matCellDef="let doc">{{ doc.createdAt | date: 'dd-MM-yyyy HH:mm' }}</td>
-      </ng-container>
+        <ng-container matColumnDef="creator">
+          <th mat-header-cell *matHeaderCellDef>Creator</th>
+          <td mat-cell *matCellDef="let doc">
+            {{ doc.creator?.fullName || "—" }}
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="creator">
-        <th mat-header-cell *matHeaderCellDef>Creator</th>
-        <td mat-cell *matCellDef="let doc">{{ doc.creator?.fullName || '—' }}</td>
-      </ng-container>
+        <ng-container matColumnDef="updatedAt">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Update</th>
+          <td mat-cell *matCellDef="let doc">
+            {{ doc.updatedAt | date : "dd-MM-yyyy HH:mm" }}
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="updatedAt">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Update</th>
-        <td mat-cell *matCellDef="let doc">{{ doc.updatedAt | date: 'dd-MM-yyyy HH:mm' }}</td>
-      </ng-container>
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef>Action</th>
+          <td mat-cell *matCellDef="let doc">
+            <button
+              mat-raised-button
+              color="accent"
+              [routerLink]="['/dashboard', doc.id]"
+            >
+              View File
+            </button>
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef>Action</th>
-        <td mat-cell *matCellDef="let doc">
-          <button mat-raised-button color="accent" [routerLink]="['/dashboard', doc.id]">
-            View File
-          </button>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns" class="table-header"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns"
+          class="table-header"
+        ></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
     </ng-template>
   </div>
 
@@ -104,7 +145,7 @@
     [pageSize]="size()"
     [pageSizeOptions]="[5, 10, 20]"
     (page)="onPageChange($event)"
-  />
+  ></mat-paginator>
 </div>
 
 <ng-template #loader>
