@@ -19,6 +19,7 @@ import {MatSortModule, Sort} from '@angular/material/sort';
 import { MatInputModule } from '@angular/material/input';
 import {RouterLink} from '@angular/router';
 import {MatDivider, MatDividerModule} from '@angular/material/divider';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-dashboard',
@@ -37,7 +38,8 @@ import {MatDivider, MatDividerModule} from '@angular/material/divider';
     DatePipe,
     MatInputModule,
     RouterLink,
-    MatDividerModule
+    MatDividerModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
@@ -181,5 +183,15 @@ export class DashboardComponent implements OnInit {
     this.page.set(1);
     this.loadDocuments();
   }
+
+  resetFilters() {
+    this.statusFilter.set(undefined);
+    this.creatorFilter.set(undefined);
+    this.creatorEmailFilter.set(undefined);
+    this.page.set(1);
+
+    this.loadDocuments();
+  }
+
 
 }

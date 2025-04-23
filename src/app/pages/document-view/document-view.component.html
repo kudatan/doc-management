@@ -1,72 +1,83 @@
 <ng-container *ngIf="!loading(); else loadingScreen">
-  <div class="doc-header">
-    <div *ngIf="isUser; else onlyName">
-      <mat-form-field appearance="outline">
-        <mat-label>Document name</mat-label>
-        <input
-          matInput
-          [value]="name()"
-          (input)="name.set($any($event.target).value)"
-        />
-      </mat-form-field>
+  <div class="document-view">
+    <button mat-stroked-button color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Go Back
+    </button>
 
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="saveName()"
-        [disabled]="name().trim() === initialName().trim()"
-      >
-        Save
-      </button>
-    </div>
+    <div class="document-view-header">
+      <ng-container *ngIf="isUser; else readonlyName">
+        <mat-form-field appearance="outline">
+          <mat-label>Document name</mat-label>
+          <input
+            matInput
+            [value]="name()"
+            (input)="name.set($any($event.target).value)"
+          />
+        </mat-form-field>
 
-    <div *ngIf="!isUser">
-      <mat-form-field appearance="fill" class="status-select">
-        <mat-label>Change Status</mat-label>
-        <mat-select
-          [value]="document()?.status"
-          (selectionChange)="selectedStatus.set($event.value); changeStatus()"
-          [disabled]="statusLoading()"
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="saveName()"
+          [disabled]="name().trim() === initialName().trim()"
         >
-          <mat-option value="UNDER_REVIEW">Under Review</mat-option>
-          <mat-option value="APPROVED">Approved</mat-option>
-          <mat-option value="DECLINED">Declined</mat-option>
-        </mat-select>
-      </mat-form-field>
+          Save
+        </button>
+      </ng-container>
+
+      <ng-template #readonlyName>
+        <h1 class="document-view-header-name">
+          Document name: <span>{{ document()?.name }}</span>
+        </h1>
+      </ng-template>
+
+      <p class="document-view-header-status">
+        Status: <span>{{ document()?.status }}</span>
+      </p>
+
+      <div *ngIf="!isUser">
+        <mat-form-field appearance="fill" class="status-select">
+          <mat-label>Change Status</mat-label>
+          <mat-select
+            [value]="document()?.status"
+            (selectionChange)="selectedStatus.set($event.value); changeStatus()"
+            [disabled]="statusLoading()"
+          >
+            <mat-option value="UNDER_REVIEW">Under Review</mat-option>
+            <mat-option value="APPROVED">Approved</mat-option>
+            <mat-option value="DECLINED">Declined</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="document-view-actions">
+        <button
+          *ngIf="isUser && (document()?.status === 'DRAFT' || document()?.status === 'REVOKE')"
+          mat-raised-button
+          color="warn"
+          (click)="deleteDocument()"
+        >
+          Delete
+        </button>
+
+        <button
+          *ngIf="isUser && document()?.status === 'READY_FOR_REVIEW'"
+          mat-raised-button
+          color="accent"
+          (click)="revokeDocument()"
+        >
+          Revoke from Review
+        </button>
+      </div>
     </div>
-
-
-    <ng-template #onlyName>
-      <h1>Document name: <span>{{ document()?.name }}</span></h1>
-    </ng-template>
-
-    <p>Status: {{ document()?.status }}</p>
-
-    <button
-      *ngIf="isUser && (document()?.status === 'DRAFT' || document()?.status === 'REVOKE')"
-      mat-raised-button
-      color="warn"
-      (click)="deleteDocument()"
-    >
-      Delete
-    </button>
-
-    <button
-      *ngIf="isUser && document()?.status === 'READY_FOR_REVIEW'"
-      mat-raised-button
-      color="accent"
-      (click)="revokeDocument()"
-    >
-      Revoke from Review
-    </button>
-
-
   </div>
 </ng-container>
 
 <div id="pspdfkit-container" class="viewer-container"></div>
+
 <ng-template #loadingScreen>
-    <div class="fullscreen-loader">
-      <mat-spinner diameter="60"></mat-spinner>
-    </div>
+  <div class="fullscreen-loader">
+    <mat-spinner diameter="100"></mat-spinner>
+  </div>
 </ng-template>

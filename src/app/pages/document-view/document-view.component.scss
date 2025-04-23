@@ -1,4 +1,23 @@
+@use "../../../styles/base/vars" as *;
+
 .viewer-container {
   height: calc(100vh - 5rem);
-  width: 100%;
+  padding: 0 1.5rem;
+}
+
+.document-view {
+  padding: 1.5rem;
+
+  font-family: $montserrat;
+
+  &-header {
+    &-name, &-status {
+      font-weight: 500;
+
+      span {
+        font-weight: 700;
+        text-decoration: underline;
+      }
+    }
+  }
 }

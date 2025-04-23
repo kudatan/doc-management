@@ -13,11 +13,12 @@ import {AuthService} from '../../services/auth/auth.service';
 import {UserService} from '../../services/user/user.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatSelectModule} from '@angular/material/select';
+import {MatIconModule} from '@angular/material/icon';
 
 @Component({
   selector: 'app-document-view',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule, MatSelectModule],
+  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule, MatSelectModule, MatIconModule,],
   templateUrl: './document-view.component.html',
   styleUrls: ['./document-view.component.scss'],
 })
@@ -38,6 +39,7 @@ export class DocumentViewComponent implements OnInit {
 
   constructor(
     private toast: ToastService,
+    private router: Router
   ) {}
 
   get isUser() {
@@ -51,6 +53,7 @@ export class DocumentViewComponent implements OnInit {
         this.document.set(doc);
         this.name.set(doc.name);
         this.initialName.set(doc.name);
+
         this.loadViewer(doc.fileUrl);
         this.loading.set(false);
       },
@@ -146,5 +149,8 @@ export class DocumentViewComponent implements OnInit {
     });
   }
 
+  goBack(): void {
+    this.router.navigate(['/dashboard']);
+  }
 
 }
