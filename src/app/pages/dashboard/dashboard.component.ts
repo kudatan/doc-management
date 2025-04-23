@@ -208,6 +208,10 @@ export class DashboardComponent implements OnInit {
     return this.userService.isUser();
   }
 
+  get isReviewer(): boolean {
+    return this.userService.isReviewer();
+  }
+
   onSortChange(sort: Sort) {
     if (!sort.direction) {
       this.loadDocuments();

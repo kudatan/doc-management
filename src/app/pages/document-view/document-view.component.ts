@@ -53,6 +53,10 @@ export class DocumentViewComponent implements OnInit {
     return this.userService.isUser();
   }
 
+  get isReviewer(): boolean {
+    return this.userService.isReviewer();
+  }
+
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;

@@ -1,25 +1,49 @@
-.full-width {
-  width: 100%;
-  margin-bottom: 15px;
-}
+@use "../../../styles/base/vars" as *;
 
-.file-upload {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
+.upload-modal {
+  font-family: $montserrat;
+  padding: 1rem;
 
-  .file-name {
-    margin-left: 10px;
-    color: #666;
-    font-size: 14px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 200px;
+  .full-width {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  &-doc-name {
+    font-family: $montserrat;
+  }
+
+  &-form {
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .file-upload {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+
+    .file-name {
+      margin-left: 10px;
+      color: #666;
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 200px;
+    }
+  }
+
+  mat-dialog-content {
+    min-height: 150px;
+    min-width: 400px;
   }
 }
 
-mat-dialog-content {
-  min-height: 150px;
-  min-width: 400px;
-}

@@ -15,6 +15,7 @@ import { DocumentService } from '../../services/dashboard/document.service';
 import { ToastService } from '../../services/toast/toast.service';
 import { DocumentDto } from '../../interfaces/dashboard.interface';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {MatIconModule} from '@angular/material/icon';
 
 @Component({
   selector: 'app-file-upload-dialog',
@@ -27,6 +28,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatInputModule,
     MatSelectModule,
     ReactiveFormsModule,
+    MatIconModule,
   ],
   templateUrl: './file-upload-dialog.component.html',
   styleUrls: ['./file-upload-dialog.component.scss'],

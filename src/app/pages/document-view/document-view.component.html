@@ -32,7 +32,7 @@
         Status: <span>{{ document()?.status }}</span>
       </p>
 
-      <ng-container *ngIf="!isUser">
+      <ng-container *ngIf="isReviewer && ['UNDER_REVIEW', 'READY_FOR_REVIEW'].includes(document()?.status)">
         <mat-form-field appearance="fill" class="status-select">
           <mat-label>Change Status</mat-label>
           <mat-select
