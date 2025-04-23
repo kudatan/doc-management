@@ -1,25 +1,27 @@
 <ng-container *ngIf="!loading(); else loadingScreen">
   <div class="document-view">
-    <button mat-stroked-button color="primary" (click)="goBack()">
+    <button class="document-view-back" mat-stroked-button color="primary" (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
       Go Back
     </button>
 
     <div class="document-view-header">
       <ng-container *ngIf="isUser; else readonlyName">
-        <mat-form-field appearance="outline">
-          <mat-label>Document name</mat-label>
-          <input matInput [value]="name()" (input)="name.set($any($event.target).value)" />
-        </mat-form-field>
+        <div class="document-view-header-change-name">
+          <mat-form-field appearance="outline">
+            <mat-label>Document name</mat-label>
+            <input matInput [value]="name()" (input)="name.set($any($event.target).value)" />
+          </mat-form-field>
 
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="saveName()"
-          [disabled]="name().trim() === initialName().trim()"
-        >
-          Save
-        </button>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="saveName()"
+            [disabled]="name().trim() === initialName().trim()"
+          >
+            Save
+          </button>
+        </div>
       </ng-container>
 
       <ng-template #readonlyName>

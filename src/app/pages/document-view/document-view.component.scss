@@ -19,5 +19,20 @@
         text-decoration: underline;
       }
     }
+
+    &-change-name {
+      button {
+        margin-left: 0.5rem;
+      }
+    }
+  }
+
+  &-back {
+    margin-bottom: 1rem;
+  }
+
+  &-actions {
+    display: flex;
+    gap: 0.5rem;
   }
 }
