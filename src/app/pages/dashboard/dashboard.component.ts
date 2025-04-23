@@ -1,4 +1,4 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, OnInit, signal, inject } from '@angular/core';
 import { NgIf, NgFor, DatePipe } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -19,8 +19,8 @@ import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 import { MatDivider, MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {User} from '../../interfaces/user.interface';
-import {UserService} from '../../services/user/user.service';
+import { User } from '../../interfaces/user.interface';
+import { UserService } from '../../services/user/user.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -46,6 +46,10 @@ import {UserService} from '../../services/user/user.service';
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
+  private readonly documentService = inject(DocumentService);
+  private readonly userService = inject(UserService);
+  private readonly dialog = inject(MatDialog);
+
   documents = signal<DocumentDto[]>([]);
   total = signal(0);
   loading = signal(false);
@@ -76,12 +80,6 @@ export class DashboardComponent implements OnInit {
     'DECLINED',
   ];
 
-  constructor(
-    private documentService: DocumentService,
-    private userService: UserService,
-    private dialog: MatDialog
-  ) {}
-
   ngOnInit() {
     this.loadDocuments();
 
@@ -92,7 +90,7 @@ export class DashboardComponent implements OnInit {
 
   loadUsers() {
     this.userService.getAllUsers(this.userPage(), this.userSize()).subscribe({
-      next: (users) => this.users.set(users)
+      next: (users) => this.users.set(users),
     });
   }
 

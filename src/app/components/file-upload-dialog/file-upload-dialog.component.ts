@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,7 +13,7 @@ import {
 } from '@angular/forms';
 import { DocumentService } from '../../services/dashboard/document.service';
 import { ToastService } from '../../services/toast/toast.service';
-import {DocumentDto} from '../../interfaces/dashboard.interface';
+import { DocumentDto } from '../../interfaces/dashboard.interface';
 
 @Component({
   selector: 'app-file-upload-dialog',
@@ -31,16 +31,16 @@ import {DocumentDto} from '../../interfaces/dashboard.interface';
   styleUrls: ['./file-upload-dialog.component.scss'],
 })
 export class FileUploadDialogComponent {
+  private readonly dialogRef = inject(MatDialogRef<FileUploadDialogComponent>);
+  private readonly fb = inject(FormBuilder);
+  private readonly documentService = inject(DocumentService);
+  private readonly toast = inject(ToastService);
+
   form: FormGroup;
   loading = signal(false);
   selectedFile: File | null = null;
 
-  constructor(
-    private dialogRef: MatDialogRef<FileUploadDialogComponent>,
-    private fb: FormBuilder,
-    private documentService: DocumentService,
-    private toast: ToastService
-  ) {
+  constructor() {
     this.form = this.fb.group({
       name: ['', [Validators.required]],
       status: ['DRAFT', [Validators.required]],
@@ -76,7 +76,10 @@ export class FileUploadDialogComponent {
         if (selectedStatus === 'READY_FOR_REVIEW') {
           this.documentService.sendToReview(res.id).subscribe({
             next: () => {
-              this.toast.show('Document sent to review successfully', 'success');
+              this.toast.show(
+                'Document sent to review successfully',
+                'success'
+              );
               this.loading.set(false);
               this.dialogRef.close(true);
             },
@@ -97,5 +100,4 @@ export class FileUploadDialogComponent {
       },
     });
   }
-
 }
