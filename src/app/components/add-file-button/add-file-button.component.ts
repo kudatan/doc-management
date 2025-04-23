@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./add-file-button.component.scss'],
 })
 export class AddFileButtonComponent {
-  addFile = output<void>();
+  @Output() addFile = new EventEmitter<void>();
 
   onAddFile() {
     this.addFile.emit();

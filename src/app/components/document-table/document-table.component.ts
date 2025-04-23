@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgIf, DatePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule, Sort } from '@angular/material/sort';
@@ -15,8 +15,8 @@ import { DOCUMENT_TABLE_COLUMNS } from '../../constants/dashboard.constants';
   styleUrls: ['./document-table.component.scss'],
 })
 export class DocumentTableComponent {
-  documents = input<DocumentDto[]>([]);
-  sortChange = output<Sort>();
+  @Input() documents: DocumentDto[] = [];
+  @Output() sortChange = new EventEmitter<Sort>();
 
   displayedColumns = DOCUMENT_TABLE_COLUMNS;
 

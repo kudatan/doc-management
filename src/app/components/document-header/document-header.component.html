@@ -1,5 +1,5 @@
 <div class="document-header">
-  <ng-container *ngIf="isUser(); else readonlyName">
+  <ng-container *ngIf="isUser; else readonlyName">
     <div class="document-header-name-edit">
       <mat-form-field appearance="outline">
         <mat-label>Document name</mat-label>
@@ -19,21 +19,21 @@
 
   <ng-template #readonlyName>
     <h1 class="document-header-name">
-      Document name: <span>{{ document()?.name }}</span>
+      Document name: <span>{{ document?.name }}</span>
     </h1>
   </ng-template>
 
   <p class="document-header-status">
-    Status: <span>{{ document()?.status }}</span>
+    Status: <span>{{ document?.status }}</span>
   </p>
 
-  <ng-container *ngIf="isReviewer() && document()?.status === 'UNDER_REVIEW'">
+  <ng-container *ngIf="isReviewer && document?.status === 'UNDER_REVIEW'">
     <mat-form-field appearance="fill" class="document-header-status-select">
       <mat-label>Change Status</mat-label>
       <mat-select
-        [value]="document()?.status"
+        [value]="document?.status"
         (selectionChange)="onStatusChange($event.value)"
-        [disabled]="statusLoading()"
+        [disabled]="statusLoading"
       >
         <mat-option *ngFor="let status of reviewStatuses" [value]="status">
           {{ status.replace('_', ' ').toLowerCase() | titlecase }}
@@ -42,21 +42,21 @@
     </mat-form-field>
   </ng-container>
 
-  <ng-container *ngIf="isReviewer() && document()?.status === 'READY_FOR_REVIEW'">
+  <ng-container *ngIf="isReviewer && document?.status === 'READY_FOR_REVIEW'">
     <button
       mat-raised-button
       color="primary"
       (click)="setUnderReview()"
-      [disabled]="statusLoading()"
+      [disabled]="statusLoading"
       class="document-header-review-button"
     >
       Mark as Under Review
     </button>
   </ng-container>
 
-  <div class="document-header-actions" *ngIf="isUser()">
+  <div class="document-header-actions" *ngIf="isUser">
     <button
-      *ngIf="canDelete()"
+      *ngIf="canDelete"
       mat-raised-button
       color="warn"
       (click)="deleteDocument()"
@@ -66,7 +66,7 @@
     </button>
 
     <button
-      *ngIf="canRevoke()"
+      *ngIf="canRevoke"
       mat-raised-button
       color="accent"
       (click)="revokeDocument()"
@@ -76,7 +76,7 @@
     </button>
 
     <button
-      *ngIf="canSendToReview()"
+      *ngIf="canSendToReview"
       mat-raised-button
       color="primary"
       (click)="sendToReview()"
