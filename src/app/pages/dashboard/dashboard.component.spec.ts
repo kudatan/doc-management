@@ -64,11 +64,17 @@ describe('DashboardComponent', () => {
 
   beforeEach(async () => {
     const documentServiceSpy = jasmine.createSpyObj('DocumentService', ['getDocuments']);
-    const userServiceSpy = jasmine.createSpyObj('UserService', ['getAllUsers', 'isUser', 'isReviewer']);
+    const userServiceSpy = jasmine.createSpyObj('UserService', [
+      'getAllUsers',
+      'isUser',
+      'isReviewer',
+    ]);
     dialogRef = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
-    documentServiceSpy.getDocuments.and.returnValue(of({ results: mockDocuments, count: mockDocuments.length }));
+    documentServiceSpy.getDocuments.and.returnValue(
+      of({ results: mockDocuments, count: mockDocuments.length }),
+    );
     userServiceSpy.getAllUsers.and.returnValue(of(mockUsers));
     userServiceSpy.isUser.and.returnValue(false);
     userServiceSpy.isReviewer.and.returnValue(true);
@@ -101,8 +107,7 @@ describe('DashboardComponent', () => {
       userService.isUser.and.returnValue(false);
       fixture.detectChanges();
       expect(documentService.getDocuments).toHaveBeenCalled();
-      // For non-user role, DRAFT documents are filtered out
-      const expectedDocuments = mockDocuments.filter(doc => doc.status !== 'DRAFT');
+      const expectedDocuments = mockDocuments.filter((doc) => doc.status !== 'DRAFT');
       expect(component.documents()).toEqual(expectedDocuments);
       expect(component.total()).toBe(expectedDocuments.length);
     });
