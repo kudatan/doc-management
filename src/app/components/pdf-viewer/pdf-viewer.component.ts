@@ -1,6 +1,7 @@
-import { Component, input, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import NutrientPDFViewer from '@nutrient-sdk/viewer';
+import { ToastService } from '../../services/toast/toast.service';
 
 @Component({
   selector: 'app-pdf-viewer',
@@ -13,6 +14,7 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
   fileUrl = input('');
 
   private nutrientPDFInstance: any = null;
+  private readonly toast = inject(ToastService);
 
   ngOnInit() {
     if (this.fileUrl()) {
@@ -34,7 +36,7 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
         theme: NutrientPDFViewer.Theme.DARK,
       });
     } catch (error) {
-      console.error('Failed to load Nutrient viewer:', error);
+      this.toast.show('Failed to send document to review', 'error');
     }
   }
 

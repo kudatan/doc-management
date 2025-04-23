@@ -112,7 +112,6 @@ export class DashboardComponent implements OnInit {
             }
           },
           error: (err) => {
-            console.error('Failed to load documents:', err);
             this.loading.set(false);
           },
         });
@@ -198,7 +197,6 @@ export class DashboardComponent implements OnInit {
           this.documents.set(res.results);
           this.total.set(res.count);
         },
-        error: (err) => console.error('Failed to sort documents:', err),
       });
   }
 
