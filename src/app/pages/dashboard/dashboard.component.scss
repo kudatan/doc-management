@@ -7,8 +7,10 @@
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 16px;
+
+    justify-content: space-between;
   }
 
   &-paginator {

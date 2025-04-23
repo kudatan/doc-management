@@ -1,6 +1,7 @@
 .document-header {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 16px;
   margin-bottom: 24px;
 
@@ -40,13 +41,5 @@
     display: flex;
     gap: 16px;
     margin-top: 16px;
-  }
-
-  &-button {
-    min-width: 120px;
-  }
-
-  &-review-button {
-    min-width: 200px;
   }
 }
