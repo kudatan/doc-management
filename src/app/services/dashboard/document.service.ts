@@ -6,11 +6,11 @@ import {
   DocumentListResponse,
   DocumentStatus,
 } from '../../interfaces/dashboard.interface';
+import {environment} from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentService {
   private http = inject(HttpClient);
-  private baseUrl = 'https://legaltech-testing.coobrick.app/api/v1/document';
 
   getDocuments(params: {
     page: number;
@@ -31,37 +31,37 @@ export class DocumentService {
     if (params.creatorEmail)
       queryParams = queryParams.set('creatorEmail', params.creatorEmail);
 
-    return this.http.get<DocumentListResponse>(this.baseUrl, {
+    return this.http.get<DocumentListResponse>(`${environment.apiUrl}/document`, {
       params: queryParams,
     });
   }
 
   uploadDocument(formData: FormData): Observable<any> {
-    return this.http.post(this.baseUrl, formData);
+    return this.http.post(`${environment.apiUrl}/document`, formData);
   }
 
   sendToReview(id: string): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/${id}/send-to-review`, {});
+    return this.http.post<void>(`${environment.apiUrl}/document/${id}/send-to-review`, {});
   }
 
   getById(id: string): Observable<DocumentDto> {
-    return this.http.get<DocumentDto>(`${this.baseUrl}/${id}`);
+    return this.http.get<DocumentDto>(`${environment.apiUrl}/document/${id}`);
   }
 
   updateName(id: string, payload: { name: string }): Observable<void> {
-    return this.http.patch<void>(`${this.baseUrl}/${id}`, payload);
+    return this.http.patch<void>(`${environment.apiUrl}/document/${id}`, payload);
   }
 
   deleteDocument(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    return this.http.delete<void>(`${environment.apiUrl}/document/${id}`);
   }
 
   revokeReview(id: string): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/${id}/revoke-review`, {});
+    return this.http.post<void>(`${environment.apiUrl}/document/${id}/revoke-review`, {});
   }
 
   changeStatus(id: string, status: 'UNDER_REVIEW' | 'APPROVED' | 'DECLINED'): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/${id}/change-status`, { status });
+    return this.http.post<void>(`${environment.apiUrl}/document/${id}/change-status`, { status });
   }
 
 }

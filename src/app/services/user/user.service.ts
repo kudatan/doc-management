@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth/auth.service';
 import { map, Observable } from 'rxjs';
 import { User, RoleType } from '../../interfaces/user.interface';
+import {environment} from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -24,7 +25,7 @@ export class UserService {
     const token = this.authService.token();
     if (token) {
       this.http
-        .get<User>('https://legaltech-testing.coobrick.app/api/v1/user')
+        .get<User>(`${environment.apiUrl}/user`)
         .subscribe({
           next: (user) => this.userSignal.set(user),
           error: () => this.userSignal.set(null),
@@ -44,7 +45,7 @@ export class UserService {
     return this.http
 
       .get<{ results: User[] }>(
-        'https://legaltech-testing.coobrick.app/api/v1/user/users',
+        `${environment.apiUrl}/user/users`,
         {
           params: {
             page,
