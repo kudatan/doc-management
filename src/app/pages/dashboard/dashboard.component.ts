@@ -12,7 +12,6 @@ import {
   DocumentStatus,
 } from '../../interfaces/dashboard.interface';
 import { DocumentService } from '../../services/dashboard/document.service';
-import { User, UserService } from '../../services/user/user.service';
 import { FileUploadDialogComponent } from '../../components/file-upload-dialog/file-upload-dialog.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule, Sort } from '@angular/material/sort';
@@ -20,6 +19,8 @@ import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 import { MatDivider, MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {User} from '../../interfaces/user.interface';
+import {UserService} from '../../services/user/user.service';
 
 @Component({
   selector: 'app-dashboard',

@@ -9,13 +9,7 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth/auth.service';
 import { map, Observable } from 'rxjs';
-
-export interface User {
-  id: string;
-  email: string;
-  fullName: string;
-  role: 'USER' | 'REVIEWER';
-}
+import { User, RoleType } from '../../interfaces/user.interface';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -48,6 +42,7 @@ export class UserService {
 
   getAllUsers(page = 1, size = 10): Observable<User[]> {
     return this.http
+
       .get<{ results: User[] }>(
         'https://legaltech-testing.coobrick.app/api/v1/user/users',
         {
