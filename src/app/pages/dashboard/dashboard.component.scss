@@ -12,13 +12,12 @@
 }
 
 .dashboard {
-  padding: 20px;
 
   &-header {
+    padding: 1.5rem 1.5rem 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
   }
 
   &-paginator {
@@ -30,6 +29,12 @@
     position: fixed;
     bottom: 0;
     width: 100%;
+
+    z-index: 2;
+  }
+
+  &-table {
+    margin: 1.5rem;
   }
 }
 

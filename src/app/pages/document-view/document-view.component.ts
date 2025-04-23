@@ -138,10 +138,11 @@ export class DocumentViewComponent implements OnInit {
         this.refreshDocument();
         this.statusLoading.set(false);
       },
-      error: () => {
-        this.toast.show('Failed to change status', 'error');
+      error: (err) => {
+        const msg = err.error?.message || 'Failed to change status';
+        this.toast.show(msg, 'error');
         this.statusLoading.set(false);
-      },
+      }
     });
   }
 
