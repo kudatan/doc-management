@@ -1,0 +1,86 @@
+<div class="filters">
+  <mat-form-field appearance="fill" class="filters-field">
+    <mat-label>Status</mat-label>
+    <mat-select
+      [value]="statusFilter()"
+      (selectionChange)="onStatusChange($event.value)"
+    >
+      <mat-option value="">All</mat-option>
+      <mat-option *ngFor="let status of filteredStatuses()" [value]="status">
+        {{ status }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <ng-container *ngIf="isReviewer">
+    <mat-form-field appearance="fill" class="filters-field">
+      <mat-label>Creator</mat-label>
+      <mat-select
+        [value]="creatorFilter()"
+        (selectionChange)="onCreatorChange($event.value)"
+      >
+        <mat-option value="">All</mat-option>
+        <mat-option *ngFor="let user of users" [value]="user.id">
+          {{ user.fullName }}
+        </mat-option>
+        <mat-divider></mat-divider>
+        <div class="filters-pagination">
+          <button
+            mat-button
+            (click)="prevUserPage()"
+            class="filters-pagination-button"
+          >
+            ← Prev
+          </button>
+          <button
+            mat-button
+            (click)="nextUserPage()"
+            class="filters-pagination-button"
+          >
+            Next →
+          </button>
+        </div>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="filters-field">
+      <mat-label>Email</mat-label>
+      <mat-select
+        [value]="creatorEmailFilter()"
+        (selectionChange)="onCreatorEmailChange($event.value)"
+      >
+        <mat-option value="">All</mat-option>
+        <mat-option *ngFor="let user of users" [value]="user.email">
+          {{ user.email }}
+        </mat-option>
+        <mat-divider></mat-divider>
+        <div class="filters-pagination">
+          <button
+            mat-button
+            (click)="prevUserPage()"
+            class="filters-pagination-button"
+          >
+            ← Prev
+          </button>
+          <button
+            mat-button
+            (click)="nextUserPage()"
+            class="filters-pagination-button"
+          >
+            Next →
+          </button>
+        </div>
+      </mat-select>
+    </mat-form-field>
+  </ng-container>
+
+  <button
+    mat-button
+    color="warn"
+    (click)="resetFilters()"
+    class="filters-reset"
+  >
+    <mat-icon>filter_alt_off</mat-icon>
+    Reset Filters
+  </button>
+</div>

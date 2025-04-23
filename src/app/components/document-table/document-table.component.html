@@ -1,0 +1,101 @@
+<div class="document-table">
+  <div *ngIf="documents.length === 0" class="document-table-empty">
+    No documents :(
+  </div>
+
+  <table
+    *ngIf="documents.length > 0"
+    mat-table
+    [dataSource]="documents"
+    matSort
+    class="mat-elevation-z2 document-table-grid"
+    (matSortChange)="onSortChange($event)"
+  >
+    <ng-container matColumnDef="name">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        class="document-table-header-cell"
+      >
+        Name
+      </th>
+      <td mat-cell *matCellDef="let doc" class="document-table-cell">
+        {{ doc.name }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef class="document-table-header-cell">
+        Status
+      </th>
+      <td mat-cell *matCellDef="let doc" class="document-table-cell">
+        {{ doc.status }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="createdAt">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        class="document-table-header-cell"
+      >
+        Date
+      </th>
+      <td mat-cell *matCellDef="let doc" class="document-table-cell">
+        {{ doc.createdAt | date : "dd-MM-yyyy HH:mm" }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="creator">
+      <th mat-header-cell *matHeaderCellDef class="document-table-header-cell">
+        Creator
+      </th>
+      <td mat-cell *matCellDef="let doc" class="document-table-cell">
+        {{ doc.creator?.fullName || "—" }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="updatedAt">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        class="document-table-header-cell"
+      >
+        Update
+      </th>
+      <td mat-cell *matCellDef="let doc" class="document-table-cell">
+        {{ doc.updatedAt | date : "dd-MM-yyyy HH:mm" }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef class="document-table-header-cell">
+        Action
+      </th>
+      <td mat-cell *matCellDef="let doc" class="document-table-cell">
+        <button
+          mat-raised-button
+          color="accent"
+          [routerLink]="['/dashboard', doc.id]"
+          class="document-table-action-button"
+        >
+          View File
+        </button>
+      </td>
+    </ng-container>
+
+    <tr
+      mat-header-row
+      *matHeaderRowDef="displayedColumns"
+      class="document-table-header-row"
+    ></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      class="document-table-row"
+    ></tr>
+  </table>
+</div>

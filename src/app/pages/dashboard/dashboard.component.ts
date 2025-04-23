@@ -1,54 +1,38 @@
-import {
-  Component,
-  computed,
-  OnInit,
-  signal,
-  inject,
-  DestroyRef,
-} from '@angular/core';
-import { NgIf, NgFor, DatePipe } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
+import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { NgIf } from '@angular/common';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import {
   DocumentDto,
   DocumentStatus,
 } from '../../interfaces/dashboard.interface';
 import { DocumentService } from '../../services/dashboard/document.service';
 import { FileUploadDialogComponent } from '../../components/file-upload-dialog/file-upload-dialog.component';
-import { MatTableModule } from '@angular/material/table';
-import { MatSortModule, Sort } from '@angular/material/sort';
-import { MatInputModule } from '@angular/material/input';
-import { RouterLink } from '@angular/router';
-import { MatDivider, MatDividerModule } from '@angular/material/divider';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { User } from '../../interfaces/user.interface';
+import { Sort } from '@angular/material/sort';
 import { UserService } from '../../services/user/user.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DocumentFiltersComponent } from '../../components/document-filters/document-filters.component';
+import { DocumentTableComponent } from '../../components/document-table/document-table.component';
+import { AddFileButtonComponent } from '../../components/add-file-button/add-file-button.component';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
+import {
+  DEFAULT_PAGE,
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_PAGE_SIZE_OPTIONS,
+  DEFAULT_USERS_PAGE_SIZE,
+} from '../../constants/dashboard.constants';
+import { User } from '../../interfaces/user.interface';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     NgIf,
-    NgFor,
-    MatFormFieldModule,
-    MatSelectModule,
     MatPaginatorModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDialogModule,
-    MatTableModule,
-    MatSortModule,
-    DatePipe,
-    MatInputModule,
-    RouterLink,
-    MatDividerModule,
-    MatProgressSpinnerModule,
+    DocumentFiltersComponent,
+    DocumentTableComponent,
+    AddFileButtonComponent,
+    LoadingSpinnerComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
@@ -63,31 +47,15 @@ export class DashboardComponent implements OnInit {
   total = signal(0);
   loading = signal(false);
 
-  page = signal(1);
-  size = signal(5);
+  page = signal(DEFAULT_PAGE);
+  size = signal(DEFAULT_PAGE_SIZE);
   statusFilter = signal<DocumentStatus | undefined>(undefined);
   users = signal<User[]>([]);
   creatorFilter = signal<string | undefined>(undefined);
-  userPage = signal(1);
-  userSize = signal(5);
+  userPage = signal(DEFAULT_PAGE);
+  userSize = signal(DEFAULT_USERS_PAGE_SIZE);
   creatorEmailFilter = signal<string | undefined>(undefined);
-  displayedColumns = [
-    'name',
-    'status',
-    'createdAt',
-    'creator',
-    'updatedAt',
-    'action',
-  ];
-
-  statuses: DocumentStatus[] = [
-    'DRAFT',
-    'REVOKE',
-    'READY_FOR_REVIEW',
-    'UNDER_REVIEW',
-    'APPROVED',
-    'DECLINED',
-  ];
+  pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS;
 
   ngOnInit() {
     this.loadDocuments();
@@ -115,12 +83,6 @@ export class DashboardComponent implements OnInit {
     this.userPage.update((page) => Math.max(1, page - 1));
     this.loadUsers();
   }
-
-  readonly filteredStatuses = computed(() => {
-    return this.isUser
-      ? this.statuses
-      : this.statuses.filter((status) => status !== 'DRAFT');
-  });
 
   loadDocuments() {
     this.loading.set(true);
@@ -177,8 +139,8 @@ export class DashboardComponent implements OnInit {
     this.loading.set(false);
   }
 
-  onStatusChange(status: DocumentStatus | '') {
-    this.statusFilter.set(status || undefined);
+  onStatusChange(status: DocumentStatus | undefined) {
+    this.statusFilter.set(status);
     this.resetToFirstPage();
     this.loadDocuments();
   }
@@ -204,12 +166,18 @@ export class DashboardComponent implements OnInit {
       });
   }
 
-  get isUser() {
-    return this.userService.isUser();
+  onCreatorChange(creatorId: string | undefined) {
+    this.creatorFilter.set(creatorId);
+    this.creatorEmailFilter.set(undefined);
+    this.resetToFirstPage();
+    this.loadDocuments();
   }
 
-  get isReviewer(): boolean {
-    return this.userService.isReviewer();
+  onCreatorEmailChange(email: string | undefined) {
+    this.creatorEmailFilter.set(email);
+    this.creatorFilter.set(undefined);
+    this.resetToFirstPage();
+    this.loadDocuments();
   }
 
   onSortChange(sort: Sort) {
@@ -237,26 +205,20 @@ export class DashboardComponent implements OnInit {
       });
   }
 
-  onCreatorChange(creatorId: string | '') {
-    this.creatorFilter.set(creatorId || undefined);
-    this.creatorEmailFilter.set(undefined);
-    this.resetToFirstPage();
-    this.loadDocuments();
-  }
-
-  onCreatorEmailChange(email: string | '') {
-    this.creatorEmailFilter.set(email || undefined);
-    this.creatorFilter.set(undefined);
-    this.resetToFirstPage();
-    this.loadDocuments();
-  }
-
   resetFilters() {
     this.statusFilter.set(undefined);
     this.creatorFilter.set(undefined);
     this.creatorEmailFilter.set(undefined);
     this.resetToFirstPage();
     this.loadDocuments();
+  }
+
+  get isUser() {
+    return this.userService.isUser();
+  }
+
+  get isReviewer(): boolean {
+    return this.userService.isReviewer();
   }
 
   private resetToFirstPage() {

@@ -1,0 +1,40 @@
+.document-table {
+  overflow-x: auto;
+  margin-bottom: 16px;
+
+  @media (max-width: 850px) {
+    overflow-x: auto;
+
+    table {
+      min-width: 850px;
+    }
+  }
+
+  &-grid {
+    width: 100%;
+  }
+
+  &-header-row {
+    background-color: #f5f5f5;
+  }
+
+  &-header-cell,
+  &-cell {
+    padding: 0 16px !important;
+  }
+
+  &-action-button {
+    min-width: 90px;
+  }
+
+  &-empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 48px;
+    font-size: 18px;
+    color: rgba(0, 0, 0, 0.54);
+    border-radius: 4px;
+    background-color: #f5f5f5;
+  }
+}

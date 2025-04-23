@@ -1,0 +1,10 @@
+.add-button {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &-icon {
+    margin-right: 4px;
+  }
+}
