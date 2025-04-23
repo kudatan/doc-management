@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Component, input, output, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,32 +25,34 @@ import { DOCUMENT_REVIEW_STATUSES } from '../../constants/document-view.constant
   styleUrls: ['./document-header.component.scss'],
 })
 export class DocumentHeaderComponent {
-  @Input() document: any;
-  @Input() isUser = false;
-  @Input() isReviewer = false;
-  @Input() statusLoading = false;
-  @Input() canDelete = false;
-  @Input() canRevoke = false;
-  @Input() canSendToReview = false;
+  document = input<any>(null);
+  isUser = input(false);
+  isReviewer = input(false);
+  statusLoading = input(false);
+  canDelete = input(false);
+  canRevoke = input(false);
+  canSendToReview = input(false);
 
-  @Output() nameChange = new EventEmitter<string>();
-  @Output() saveNameEvent = new EventEmitter<void>();
-  @Output() deleteDocumentEvent = new EventEmitter<void>();
-  @Output() revokeDocumentEvent = new EventEmitter<void>();
-  @Output() sendToReviewEvent = new EventEmitter<void>();
-  @Output() changeStatusEvent = new EventEmitter<ReviewStatus>();
-  @Output() setUnderReviewEvent = new EventEmitter<void>();
+  nameChange = output<string>();
+  saveNameEvent = output<void>();
+  deleteDocumentEvent = output<void>();
+  revokeDocumentEvent = output<void>();
+  sendToReviewEvent = output<void>();
+  changeStatusEvent = output<ReviewStatus>();
+  setUnderReviewEvent = output<void>();
 
   name = signal('');
   initialName = signal('');
   selectedStatus = signal<ReviewStatus | null>(null);
   reviewStatuses = DOCUMENT_REVIEW_STATUSES;
 
-  ngOnChanges() {
-    if (this.document) {
-      this.name.set(this.document.name);
-      this.initialName.set(this.document.name);
-    }
+  constructor() {
+    effect(() => {
+      if (this.document()) {
+        this.name.set(this.document().name);
+        this.initialName.set(this.document().name);
+      }
+    });
   }
 
   onNameChange(event: Event) {

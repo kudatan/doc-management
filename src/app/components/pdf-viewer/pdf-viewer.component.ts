@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import NutrientPDFViewer from '@nutrient-sdk/viewer';
 
@@ -10,12 +10,12 @@ import NutrientPDFViewer from '@nutrient-sdk/viewer';
   styleUrls: ['./pdf-viewer.component.scss'],
 })
 export class PdfViewerComponent implements OnInit, OnDestroy {
-  @Input() fileUrl = '';
+  fileUrl = input('');
 
   private nutrientPDFInstance: any = null;
 
   ngOnInit() {
-    if (this.fileUrl) {
+    if (this.fileUrl()) {
       this.initViewer();
     }
   }
@@ -29,7 +29,7 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
     try {
       this.nutrientPDFInstance = await NutrientPDFViewer.load({
         container: '#nutrient-container',
-        document: this.fileUrl,
+        document: this.fileUrl(),
         baseUrl: `${location.protocol}//${location.host}/assets/`,
         theme: NutrientPDFViewer.Theme.DARK,
       });

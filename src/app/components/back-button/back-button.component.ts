@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./back-button.component.scss'],
 })
 export class BackButtonComponent {
-  @Output() goBackEvent = new EventEmitter<void>();
+  goBackEvent = output<void>();
 
   goBack() {
     this.goBackEvent.emit();

@@ -1,13 +1,4 @@
-import {
-  Component,
-  computed,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  signal,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { NgIf, NgFor } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -33,20 +24,20 @@ import { DOCUMENT_STATUSES } from '../../constants/dashboard.constants';
   templateUrl: './document-filters.component.html',
   styleUrls: ['./document-filters.component.scss'],
 })
-export class DocumentFiltersComponent implements OnChanges {
-  @Input() isUser = false;
-  @Input() isReviewer = false;
-  @Input() users: User[] = [];
-  @Input() selectedStatus: DocumentStatus | undefined;
-  @Input() selectedCreatorId: string | undefined;
-  @Input() selectedCreatorEmail: string | undefined;
+export class DocumentFiltersComponent {
+  isUser = input(false);
+  isReviewer = input(false);
+  users = input<User[]>([]);
+  selectedStatus = input<DocumentStatus | undefined>(undefined);
+  selectedCreatorId = input<string | undefined>(undefined);
+  selectedCreatorEmail = input<string | undefined>(undefined);
 
-  @Output() statusChange = new EventEmitter<DocumentStatus | undefined>();
-  @Output() creatorChange = new EventEmitter<string | undefined>();
-  @Output() creatorEmailChange = new EventEmitter<string | undefined>();
-  @Output() resetFiltersEvent = new EventEmitter<void>();
-  @Output() nextUserPageEvent = new EventEmitter<void>();
-  @Output() prevUserPageEvent = new EventEmitter<void>();
+  statusChange = output<DocumentStatus | undefined>();
+  creatorChange = output<string | undefined>();
+  creatorEmailChange = output<string | undefined>();
+  resetFiltersEvent = output<void>();
+  nextUserPageEvent = output<void>();
+  prevUserPageEvent = output<void>();
 
   statusFilter = signal<DocumentStatus | undefined>(undefined);
   creatorFilter = signal<string | undefined>(undefined);
@@ -54,20 +45,16 @@ export class DocumentFiltersComponent implements OnChanges {
 
   statuses = DOCUMENT_STATUSES;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['selectedStatus']) {
-      this.statusFilter.set(this.selectedStatus);
-    }
-    if (changes['selectedCreatorId']) {
-      this.creatorFilter.set(this.selectedCreatorId);
-    }
-    if (changes['selectedCreatorEmail']) {
-      this.creatorEmailFilter.set(this.selectedCreatorEmail);
-    }
+  constructor() {
+    effect(() => {
+      this.statusFilter.set(this.selectedStatus());
+      this.creatorFilter.set(this.selectedCreatorId());
+      this.creatorEmailFilter.set(this.selectedCreatorEmail());
+    });
   }
 
   readonly filteredStatuses = computed(() => {
-    return this.isUser ? this.statuses : this.statuses.filter((status) => status !== 'DRAFT');
+    return this.isUser() ? this.statuses : this.statuses.filter((status) => status !== 'DRAFT');
   });
 
   onStatusChange(status: DocumentStatus | '') {
