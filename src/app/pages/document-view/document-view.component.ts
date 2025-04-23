@@ -149,6 +149,21 @@ export class DocumentViewComponent implements OnInit {
     });
   }
 
+  sendToReview(): void {
+    const doc = this.document();
+    if (!doc || !this.isUser || doc.status !== 'DRAFT') return;
+
+    this.documentService.sendToReview(doc.id).subscribe({
+      next: () => {
+        this.toast.show('Document sent to review', 'success');
+        this.refreshDocument();
+      },
+      error: () => {
+        this.toast.show('Failed to send document to review', 'error');
+      },
+    });
+  }
+
   goBack(): void {
     this.router.navigate(['/dashboard']);
   }

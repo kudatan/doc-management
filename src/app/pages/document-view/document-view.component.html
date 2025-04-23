@@ -69,6 +69,15 @@
         >
           Revoke from Review
         </button>
+
+        <button
+          *ngIf="isUser && document()?.status === 'DRAFT'"
+          mat-raised-button
+          color="primary"
+          (click)="sendToReview()"
+        >
+          Send to Review
+        </button>
       </div>
     </div>
   </div>
