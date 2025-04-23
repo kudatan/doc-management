@@ -180,6 +180,28 @@ export class DocumentViewComponent implements OnInit {
       });
   }
 
+  setUnderReview(): void {
+    const doc = this.document();
+    if (!doc?.id || !this.userService.isReviewer()) return;
+
+    this.statusLoading.set(true);
+    this.documentService
+      .changeStatus(doc.id, 'UNDER_REVIEW')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toast.show('Status changed to UNDER_REVIEW', 'success');
+          this.refreshDocument();
+        },
+        error: (err) => {
+          const msg = err.error?.message || 'Failed to change status';
+          this.toast.show(msg, 'error');
+        },
+        complete: () => this.statusLoading.set(false),
+      });
+  }
+
+
   refreshDocument(): void {
     const id = this.document()?.id;
     if (!id) return;

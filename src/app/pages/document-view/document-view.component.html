@@ -34,7 +34,7 @@
         Status: <span>{{ document()?.status }}</span>
       </p>
 
-      <ng-container *ngIf="isReviewer && ['UNDER_REVIEW', 'READY_FOR_REVIEW'].includes(document()?.status)">
+      <ng-container *ngIf="isReviewer && document()?.status === 'UNDER_REVIEW'">
         <mat-form-field appearance="fill" class="status-select">
           <mat-label>Change Status</mat-label>
           <mat-select
@@ -42,12 +42,24 @@
             (selectionChange)="selectedStatus.set($event.value); changeStatus()"
             [disabled]="statusLoading()"
           >
-            <mat-option *ngFor="let status of ['UNDER_REVIEW', 'APPROVED', 'DECLINED']" [value]="status">
+            <mat-option *ngFor="let status of ['APPROVED', 'DECLINED']" [value]="status">
               {{ status.replace('_', ' ').toLowerCase() | titlecase }}
             </mat-option>
           </mat-select>
         </mat-form-field>
       </ng-container>
+
+      <ng-container *ngIf="isReviewer && document()?.status === 'READY_FOR_REVIEW'">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="setUnderReview()"
+          [disabled]="statusLoading()"
+        >
+          Mark as Under Review
+        </button>
+      </ng-container>
+
 
       <div class="document-view-actions" *ngIf="isUser">
         <button
