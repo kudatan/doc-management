@@ -1,8 +1,14 @@
-import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  DestroyRef,
+  OnDestroy,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import PSPDFKit from 'pspdfkit';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import NutrientPDFViewer from '@nutrient-sdk/viewer';
 
 import { DocumentService } from '../../services/dashboard/document.service';
 import { ToastService } from '../../services/toast/toast.service';
@@ -32,7 +39,7 @@ import { ReviewStatus } from '../../interfaces/dashboard.interface';
   templateUrl: './document-view.component.html',
   styleUrls: ['./document-view.component.scss'],
 })
-export class DocumentViewComponent implements OnInit {
+export class DocumentViewComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private documentService = inject(DocumentService);
@@ -48,6 +55,7 @@ export class DocumentViewComponent implements OnInit {
   statusLoading = signal(false);
 
   user = this.userService.user$;
+  private nutrientPDFInstance: any = null;
 
   get isUser(): boolean {
     return this.userService.isUser();
@@ -83,11 +91,21 @@ export class DocumentViewComponent implements OnInit {
   }
 
   private async initViewer(fileUrl: string): Promise<void> {
-    await PSPDFKit.load({
-      container: '#pspdfkit-container',
-      document: fileUrl,
-      baseUrl: location.origin + '/',
-    });
+    if (this.nutrientPDFInstance) {
+      await this.nutrientPDFInstance.unload();
+      this.nutrientPDFInstance = null;
+    }
+
+    try {
+      this.nutrientPDFInstance = await NutrientPDFViewer.load({
+        container: '#nutrient-container',
+        document: fileUrl,
+        baseUrl: `${location.protocol}//${location.host}/assets/`,
+        theme: NutrientPDFViewer.Theme.DARK,
+      });
+    } catch (error) {
+      this.toast.show("Failed to load Nutrient viewer:", 'error');
+    }
   }
 
   saveName(): void {
@@ -201,7 +219,6 @@ export class DocumentViewComponent implements OnInit {
       });
   }
 
-
   refreshDocument(): void {
     const id = this.document()?.id;
     if (!id) return;
@@ -233,5 +250,11 @@ export class DocumentViewComponent implements OnInit {
 
   private showError(message: string): void {
     this.toast.show(message, 'error');
+  }
+
+  ngOnDestroy() {
+    if (this.nutrientPDFInstance) {
+      NutrientPDFViewer.unload(this.nutrientPDFInstance);
+    }
   }
 }
