@@ -1,4 +1,11 @@
-import { Component, computed, OnInit, signal, inject } from '@angular/core';
+import {
+  Component,
+  computed,
+  OnInit,
+  signal,
+  inject,
+  DestroyRef,
+} from '@angular/core';
 import { NgIf, NgFor, DatePipe } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -21,6 +28,7 @@ import { MatDivider, MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { User } from '../../interfaces/user.interface';
 import { UserService } from '../../services/user/user.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-dashboard',
@@ -49,6 +57,7 @@ export class DashboardComponent implements OnInit {
   private readonly documentService = inject(DocumentService);
   private readonly userService = inject(UserService);
   private readonly dialog = inject(MatDialog);
+  private readonly destroyRef = inject(DestroyRef);
 
   documents = signal<DocumentDto[]>([]);
   total = signal(0);
@@ -89,9 +98,12 @@ export class DashboardComponent implements OnInit {
   }
 
   loadUsers() {
-    this.userService.getAllUsers(this.userPage(), this.userSize()).subscribe({
-      next: (users) => this.users.set(users),
-    });
+    this.userService
+      .getAllUsers(this.userPage(), this.userSize())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (users) => this.users.set(users),
+      });
   }
 
   nextUserPage() {
@@ -127,6 +139,7 @@ export class DashboardComponent implements OnInit {
           creatorEmail: this.creatorEmailFilter() || undefined,
           sort: 'updatedAt,desc',
         })
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (res) => {
             const pageDocs = res.results;
@@ -181,11 +194,14 @@ export class DashboardComponent implements OnInit {
       width: '500px',
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loadDocuments();
-      }
-    });
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
+        if (result) {
+          this.loadDocuments();
+        }
+      });
   }
 
   get isUser() {
@@ -207,6 +223,7 @@ export class DashboardComponent implements OnInit {
         creatorEmail: this.creatorEmailFilter() || undefined,
         sort: `${sort.active},${sort.direction}`,
       })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
           this.documents.set(res.results);

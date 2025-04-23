@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,7 @@ import {
 import { DocumentService } from '../../services/dashboard/document.service';
 import { ToastService } from '../../services/toast/toast.service';
 import { DocumentDto } from '../../interfaces/dashboard.interface';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-file-upload-dialog',
@@ -35,6 +36,7 @@ export class FileUploadDialogComponent {
   private readonly fb = inject(FormBuilder);
   private readonly documentService = inject(DocumentService);
   private readonly toast = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
 
   form: FormGroup;
   loading = signal(false);
@@ -69,35 +71,41 @@ export class FileUploadDialogComponent {
     formData.append('file', this.selectedFile);
     formData.append('name', this.form.value.name);
     formData.append('status', 'DRAFT');
-    this.documentService.uploadDocument(formData).subscribe({
-      next: (res: DocumentDto) => {
-        const selectedStatus = this.form.value.status;
+    this.documentService
+      .uploadDocument(formData)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res: DocumentDto) => {
+          const selectedStatus = this.form.value.status;
 
-        if (selectedStatus === 'READY_FOR_REVIEW') {
-          this.documentService.sendToReview(res.id).subscribe({
-            next: () => {
-              this.toast.show(
-                'Document sent to review successfully',
-                'success'
-              );
-              this.loading.set(false);
-              this.dialogRef.close(true);
-            },
-            error: () => {
-              this.toast.show('Failed to send document to review', 'error');
-              this.loading.set(false);
-            },
-          });
-        } else {
-          this.toast.show('File uploaded successfully', 'success');
+          if (selectedStatus === 'READY_FOR_REVIEW') {
+            this.documentService
+              .sendToReview(res.id)
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe({
+                next: () => {
+                  this.toast.show(
+                    'Document sent to review successfully',
+                    'success'
+                  );
+                  this.loading.set(false);
+                  this.dialogRef.close(true);
+                },
+                error: () => {
+                  this.toast.show('Failed to send document to review', 'error');
+                  this.loading.set(false);
+                },
+              });
+          } else {
+            this.toast.show('File uploaded successfully', 'success');
+            this.loading.set(false);
+            this.dialogRef.close(true);
+          }
+        },
+        error: () => {
+          this.toast.show('File upload failed', 'error');
           this.loading.set(false);
-          this.dialogRef.close(true);
-        }
-      },
-      error: () => {
-        this.toast.show('File upload failed', 'error');
-        this.loading.set(false);
-      },
-    });
+        },
+      });
   }
 }

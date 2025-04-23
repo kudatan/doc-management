@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { ToastService } from '../../services/toast/toast.service';
 import { AuthService } from '../../services/auth/auth.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-register',
@@ -30,6 +31,7 @@ export class RegisterComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
   loading = signal(false);
   form!: ReturnType<FormBuilder['group']>;
@@ -48,23 +50,26 @@ export class RegisterComponent implements OnInit {
 
     this.loading.set(true);
 
-    this.auth.register(this.form.value).subscribe({
-      next: () => {
-        this.toast.show('Registration successful!', 'success');
-        this.router.navigate(['/login']);
-      },
-      error: (err) => {
-        const message = err?.error?.message;
-        this.toast.show(
-          Array.isArray(message)
-            ? message.join(', ')
-            : typeof message === 'string'
-            ? message
-            : 'Registration failed. Try a different email.',
-          'error'
-        );
-        this.loading.set(false);
-      },
-    });
+    this.auth
+      .register(this.form.value)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toast.show('Registration successful!', 'success');
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          const message = err?.error?.message;
+          this.toast.show(
+            Array.isArray(message)
+              ? message.join(', ')
+              : typeof message === 'string'
+              ? message
+              : 'Registration failed. Try a different email.',
+            'error'
+          );
+          this.loading.set(false);
+        },
+      });
   }
 }
