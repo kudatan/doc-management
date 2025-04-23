@@ -1,59 +1,84 @@
 # DocManagement
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.8.
+A document management panel built with Angular 19, designed for two distinct user roles — **User** and **Reviewer**. It streamlines document uploading, reviewing, and approval workflows. This project was bootstrapped with [Angular CLI](https://github.com/angular/angular-cli) version 19.2.8.
 
-## Development server
+## ✨ Features
+
+### 🔐 Authentication
+- JWT-based login system
+- Redirects users to the document dashboard after successful login
+
+### 📂 Document Dashboard
+- Filter by status, sort by columns, and paginate through documents
+- Reviewer-only filter by creator
+- Role-specific visibility:
+  - **Users** see only their documents
+  - **Reviewers** do not see drafts
+
+### 🧑‍💻 User Role
+- Upload document with title + file  
+  → Actions: `Save as Draft`, `Send to Review`
+- Edit document:
+  - Rename
+  - Delete if status is `Draft` or `Revoked`
+  - Revoke if status is `Pending Review`
+- View document using PSPDFKit SDK
+
+### 👩‍⚖️ Reviewer Role
+- View all documents (excluding drafts)
+- Update document status:  
+  → `In Review`, `Approved`, `Rejected`
+- Full preview via PSPDFKit SDK
+
+## 🧰 Tech Stack
+
+- Angular 19 with **Signals**
+- **Angular Material** for UI components
+- **PSPDFKit / Nutrient Web SDK** for document viewing
+- Unit test coverage (basic)
+
+## 🛠️ Development
+
+### Development server
 
 To start a local development server, run:
-
+```bash
+npm i
+```
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Navigate to `http://localhost:4200/`. The app reloads automatically on file changes.
 
-## Code scaffolding
+### Code scaffolding
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+List available schematics:
 
 ```bash
 ng generate --help
 ```
 
-## Building
+### Building
 
-To build the project run:
+Build the project:
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Compiled files will be in the `dist/` folder.
 
-## Running unit tests
+### Running unit tests
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Execute unit tests with [Karma](https://karma-runner.github.io):
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+## 📚 Additional Resources
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli)
+- [PSPDFKit Web SDK Guide](https://www.nutrient.io/guides/web/)
+- [Backend API (Swagger)](https://legaltech-testing.coobrick.app/swagger)
